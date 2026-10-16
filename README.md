@@ -16,7 +16,7 @@ Checked per container:
 
 <br>
 
-### Installation
+## Installation
 1. Put the script lxc-update-check.sh __on your proxmox host__
 2. Make it executable
 ```
@@ -28,7 +28,7 @@ chmod +x lxc-update-check.sh
 ```
 <br>
 
-### Commands
+## Commands
 ```
 ./lxc-update-check.sh <option>
 ```
@@ -43,7 +43,7 @@ chmod +x lxc-update-check.sh
 
 <br>
 
-### Configuration
+## Configuration
 Apps that run neither via a community-script nor via Docker can be declared
 with a small file **inside the container**:  
 ```
@@ -64,7 +64,7 @@ with a small file **inside the container**:
 
 <br>
 
-### How to use
+## How to use
 Report page:
 "Check now" re-checks everything  
 the arrow button (↑) re-checks a single container  
