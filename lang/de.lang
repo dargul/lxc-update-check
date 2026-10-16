@@ -1,0 +1,253 @@
+# Sprachdatei für lxc-update-check – Deutsch
+L[lang_code]="de"
+L[title]="LXC-Updates"
+L[date_format]="%d.%m.%Y, %H:%M Uhr"
+
+# Kopfbereich
+L[headline_none]="Alle Apps sind aktuell"
+L[headline_one]="1 App-Update verfügbar"
+L[headline_many]="{n} App-Updates in {c} Containern"
+L[summary_pkg_none]="Auch bei den Systempaketen steht nichts aus."
+L[summary_pkg_sec]="Dazu {n} Systempakete auf {s} von {t} Systemen, davon {x} Security-Updates."
+L[summary_pkg_nosec]="Dazu {n} Systempakete auf {s} von {t} Systemen, keine Security-Updates darunter."
+L[summary_err]="{n} Systeme konnten nicht geprüft werden."
+L[meta]="Geprüft am {date} auf {host}, Dauer {sec} s. Nächster Lauf um 02:00 Uhr."
+
+# Knopf „Jetzt prüfen“
+L[btn_scan]="Jetzt prüfen"
+L[btn_scanning]="Prüfung läuft …"
+L[scan_failed]="Die Prüfung konnte nicht gestartet werden."
+
+# Spaltenköpfe
+L[col_id]="ID"
+L[col_container]="Container"
+L[col_app]="App"
+L[col_installed]="Installiert"
+L[col_latest]="Neueste Version"
+L[col_status]="Status"
+L[col_packages]="Systempakete"
+
+# Paketliste
+L[btn_show]="Pakete anzeigen"
+L[btn_hide]="Pakete ausblenden"
+L[pk_package]="Paket"
+L[pk_installed]="Installiert"
+L[pk_available]="Verfügbar"
+L[pkg_new]="neu"
+L[tag_security]="Security"
+L[tag_n_security]="{n} Security"
+
+# Status
+L[st_ok]="Aktuell"
+L[st_appupdate]="App-Update"
+L[st_security]="Security-Updates"
+L[st_sysupdates]="Systemupdates"
+L[st_manual]="Manuell prüfen"
+L[st_unknown]="Version unbekannt"
+L[st_uncheckable]="Nicht prüfbar"
+L[st_noanswer]="Keine Antwort"
+L[st_stopped]="Gestoppt"
+
+# Hinweise
+L[note_stopped]="Container läuft nicht und wurde nicht geprüft"
+L[note_timeout]="Keine Antwort innerhalb von {sec} s"
+L[note_manual]="Kein Versionsabgleich möglich: Diese App wird über Systempakete oder einen eigenen Updater aktualisiert"
+L[note_unknown]="Installierte oder neueste Version konnte nicht ermittelt werden"
+L[warn_apt]="apt-get update fehlgeschlagen, Paketlisten evtl. veraltet"
+L[warn_apk]="apk update fehlgeschlagen, Paketlisten evtl. veraltet"
+L[warn_checkupdates]="checkupdates fehlt – im Container pacman-contrib installieren"
+L[warn_nopm]="Kein unterstützter Paketmanager gefunden"
+L[hint_script_pinned]="vom Script vorgegebene Version"
+L[hint_docker]="Docker"
+L[hint_docker_pinned]="Docker, per Digest fest eingestellt"
+L[hint_docker_local]="Docker, lokal gebautes Image"
+L[hint_docker_noregistry]="Docker, Registry nicht abfragbar"
+L[new_image]="neues Image"
+L[os_unknown]="unbekannt"
+L[host_label]="Host"
+
+L[tag_beta]="Beta"
+L[hint_stable]="stabil: {v}"
+L[btn_config]="Einstellungen"
+L[btn_back]="Zurück"
+L[cfg_title]="Einstellungen"
+L[cfg_intro]="Alle Einstellungen und Sprachdateien liegen auf dem Proxmox-Host im Verzeichnis {dir}. Diese Seite zeigt den Stand der letzten Prüfung."
+L[cfg_settings_title]="Aktuelle Einstellungen"
+L[cfg_col_setting]="Einstellung"
+L[cfg_col_value]="Wert"
+L[cfg_col_desc]="Bedeutung"
+L[cfg_OUT_DIR]="Ordner, in dem der Report abgelegt wird."
+L[cfg_PORT]="Port, unter dem der Report im Browser erreichbar ist."
+L[cfg_INCLUDE_HOST]="1 = der Proxmox-Host selbst wird mitgeprüft, 0 = nur die Container."
+L[cfg_TIMEOUT]="Maximale Wartezeit pro Container in Sekunden."
+L[cfg_EXCLUDE]="Container-IDs, die nicht geprüft werden, durch Leerzeichen getrennt."
+L[cfg_LANG_FILE]="Sprachdatei, aus der alle Texte des Reports kommen."
+L[cfg_GITHUB_TOKEN]="Optionaler GitHub-Token. Ohne Token erlaubt GitHub nur 60 Versionsabfragen pro Stunde."
+L[cfg_token_set]="gesetzt"
+L[cfg_token_unset]="nicht gesetzt"
+L[cfg_empty]="(leer)"
+L[cfg_files_title]="Dateien im Verzeichnis"
+L[cfg_col_file]="Datei"
+L[cfg_file_config]="Einstellungen des Scripts, siehe Tabelle oben."
+L[cfg_file_lang]="Sprachdatei mit {n} Texten."
+L[cfg_file_lang_active]="Sprachdatei mit {n} Texten, zurzeit aktiv."
+L[cfg_howto]="Zum Ändern die Datei auf dem Proxmox-Host bearbeiten, zum Beispiel mit: nano {file}. Änderungen gelten ab der nächsten Prüfung. Nach einer Änderung von PORT oder OUT_D>
+
+L[txt_no_file]="nicht hinterlegt – erst nach dem nächsten „update“ im Container bekannt"
+L[txt_no_release]="Abfrage beim Projekt fehlgeschlagen"
+L[txt_no_check]="Script ohne Versionsprüfung"
+L[txt_own_updater]="Update über Paketquelle oder eigenen Updater"
+L[txt_script_missing]="Update-Script der App nicht abrufbar"
+L[txt_no_app]="keine App erkannt"
+L[txt_not_checked]="nicht geprüft"
+L[txt_docker_pinned]="per Digest fest eingestellt"
+L[txt_docker_local]="lokal gebautes Image, kein Abgleich"
+L[txt_docker_noregistry]="Registry nicht abfragbar"
+L[note_beta_default]="Achtung: „update“ würde bei {app} die Vorabversion {v} installieren, nicht die stabile Version."
+
+L[txt_no_manual_version]="keine Version angegeben (version= oder version_cmd= fehlt)"
+L[tip_no_app]="So wird eine App in diesem Container erkannt:\n1. Per community-script installiert: Die Datei /usr/bin/update im Container muss auf das Script der App verweisen.\n2. >
+
+L[tip_no_file]="Im Container fehlt die Versionsdatei, in der das community-script die installierte Version festhält. Das kommt bei älteren Installationen vor.\nLösung: Im Container >
+L[tip_no_release]="GitHub oder Codeberg hat auf die Versionsabfrage nicht geantwortet.\nLösung: Internetzugang des Proxmox-Hosts prüfen und später erneut prüfen. Tritt es häufig auf>
+L[tip_no_check]="Das community-script dieser App enthält keinen Versionsvergleich, deshalb lässt sich keine installierte Version auslesen.\nUpdates kommen bei solchen Apps meist übe>
+L[tip_own_updater]="Das Script nennt keine Quelle, bei der sich die neueste Version abfragen lässt.\nLösung: Mit dem Pfeil-Knopf oder „update“ im Container aktualisieren. Für eine V>
+L[tip_script_missing]="Das Update-Script dieser App wurde im community-scripts-Repository nicht gefunden. Die App wurde dort entfernt oder umbenannt, oder GitHub war nicht erreichba>
+L[tip_not_checked]="Der Container war gestoppt oder hat nicht rechtzeitig geantwortet.\nLösung: Container starten und erneut prüfen. Bei langsamen Containern TIMEOUT in den Einstell>
+L[tip_docker_pinned]="Das Image ist in der Compose-Datei mit festem Digest (@sha256:…) eingetragen. Es ändert sich nur mit der Compose-Datei, deshalb gibt es nichts zu vergleichen."
+L[tip_docker_local]="Das Image wurde lokal gebaut und stammt aus keiner Registry, deshalb gibt es keine Quelle zum Vergleichen."
+L[tip_docker_noregistry]="Die Registry des Images konnte nicht abgefragt werden (nicht erreichbar, privat oder Anmeldung nötig).\nLösung: Internetzugang des Proxmox-Hosts prüfen. Pr>
+L[tip_no_manual_version]="In /etc/lxc-update-check.conf im Container fehlt die installierte Version.\nLösung: Dort version_cmd=Befehl eintragen, der die Version ausgibt, oder fest v>
+L[tip_docker_tag]="Dieses Docker-Image bringt keine Versionsnummer mit, angezeigt wird der Tag aus der Compose-Datei. Ob ein Update vorliegt, wird trotzdem über die Prüfsumme des Im>
+L[tip_new_image]="In der Registry liegt unter demselben Tag ein neueres Image. Eine Versionsnummer gibt das Image nicht an."
+L[btn_update_tip]="Container {id} jetzt aktualisieren"
+L[upd_confirm]="Container {id} ({name}) jetzt aktualisieren?\n\nAktualisiert werden Systempakete, die App (community-script) und Docker-Container. Ist es in den Einstellungen aktivi>
+L[upd_running]="Update von Container {id} läuft …"
+L[pw_prompt]="Passwort für Änderungen (steht auf dem Proxmox-Host in {pwfile}):"
+L[last_update_ok]="Letztes Update: Container {id} ({name}) am {date}, erfolgreich."
+L[last_update_fail]="Letztes Update: Container {id} ({name}) am {date}, mit Fehlern beendet."
+L[last_update_log]="Protokoll ansehen"
+L[cfg_UPDATE_SNAPSHOT]="Vor einem Update über den Pfeil-Knopf einen Snapshot des Containers anlegen (ersetzt den vorherigen)."
+L[cfg_readonly]="nur in der Datei änderbar"
+L[cfg_save]="Speichern"
+L[cfg_saving]="Wird übernommen …"
+L[cfg_token_keep]="leer lassen = unverändert"
+L[cfg_token_remove]="Token entfernen"
+L[cfg_howto2]="Änderungen hier speichern oder die Datei auf dem Proxmox-Host bearbeiten: nano {file}. PORT, OUT_DIR und die Sprachdateien lassen sich nur dort ändern; nach PORT oder>
+L[err_server]="Der Webdienst antwortet nicht.\nLösung: Auf dem Proxmox-Host „systemctl status lxc-update-web“ prüfen und bei Bedarf „systemctl restart lxc-update-web“ ausführen. Die>
+L[err_oldserver]="Der Webdienst kennt diese Funktion nicht.\nLösung: Auf dem Proxmox-Host „lxc-update-check --install“ erneut ausführen."
+L[err_password]="Das Passwort ist falsch.\nLösung: Es steht auf dem Proxmox-Host in der Datei {pwfile} (anzeigen mit „cat {pwfile}“)."
+L[err_nopassword]="Es ist kein Passwort eingerichtet, deshalb sind Änderungen über den Browser gesperrt.\nLösung: Auf dem Proxmox-Host „lxc-update-check --install“ ausführen; dabei >
+L[err_pwneeded]="Ohne Passwort geht es nicht.\nEs steht auf dem Proxmox-Host in der Datei {pwfile}."
+L[err_busy]="Es läuft gerade eine Prüfung oder ein Update.\nLösung: Warten, bis die Seite neu geladen wurde, und es dann erneut versuchen."
+L[err_invalid]="Der Wert für {field} ist ungültig.\nLösung: Format prüfen, siehe Erklärung neben dem Feld. Bei EXCLUDE sind nur Zahlen und Leerzeichen erlaubt, bei TIMEOUT nur eine >
+L[err_nostart]="Der Auftrag wurde angenommen, aber nicht ausgeführt.\nLösung: Auf dem Proxmox-Host „systemctl status lxc-update-scan.path“ und „journalctl -u lxc-update-scan -n 30“ >
+
+L[app_title]="LXC Update Check"
+L[btn_refresh_tip]="Container {id} Info aktualisieren"
+L[prog_title]="Prüfung läuft"
+L[prog_starting]="Prüfung wird gestartet …"
+L[prog_step]="{n} von {t}: {name}"
+L[prog_finishing]="Report wird geschrieben …"
+L[prog_close]="Schließen (läuft im Hintergrund weiter)"
+
+L[cfg_saved]="Die Einstellungen wurden gespeichert und sind aktiv."
+L[doc_title]="Container aktualisieren"
+L[doc_intro]="Updates werden nicht im Browser installiert, sondern auf dem Proxmox-Host mit diesem Befehl. ID ist die Nummer des Containers, zum Beispiel 104. Der Container muss lau>
+L[doc_steps]="Der Befehl führt nacheinander diese Schritte aus:"
+L[doc_step1]="Snapshot: Ist UPDATE_SNAPSHOT aktiv, wird ein Snapshot mit dem Namen lxc_update_check angelegt; der vorherige wird ersetzt. Kann der Storage keine Snapshots, läuft das>
+L[doc_step2]="Systempakete: Alle Pakete werden ohne Rückfragen aktualisiert (apt-get dist-upgrade, bei anderen Systemen apk, dnf oder pacman). Selbst geänderte Konfigurationsdateien>
+L[doc_step3]="App: Das Update des community-scripts läuft unbeaufsichtigt, wie der Befehl „update“ im Container. Würde dabei eine Vorabversion (Beta) installiert, wird dieser Schrit>
+L[doc_step4]="Docker: In jedem Compose-Projekt des Containers laufen „docker compose pull“ und „docker compose up -d“. Einzeln mit „docker run“ gestartete Container bleiben unveränd>
+L[doc_step5]="Prüfung: Zum Schluss wird alles neu geprüft. Der Report zeigt über der Tabelle das Ergebnis und einen Link zum Protokoll."
+L[doc_rollback]="Zurück zum Stand vor dem Update, falls etwas nicht mehr funktioniert:"
+L[doc_limits]="Jeder Schritt darf höchstens eine Stunde dauern (UPDATE_TIMEOUT in der Datei config). Stellt ein community-script beim Update eine Rückfrage, schlägt Schritt 3 fehl; >
+
+L[hint_package]="Systempaket"
+
+L[meta_checked]="Geprüft am {date} auf {host}, Dauer {sec} s."
+L[meta_next]="Nächste automatische Prüfung täglich um {time} Uhr."
+L[meta_off]="Die automatische Prüfung ist ausgeschaltet."
+L[cfg_CRON_ENABLED]="Automatische tägliche Prüfung (Cronjob) ein- oder ausschalten. „Jetzt prüfen“ funktioniert immer."
+L[cfg_CRON_TIME]="Uhrzeit der täglichen Prüfung."
+
+L[btn_help]="Hilfe"
+L[help_title]="Hilfe: System aktualisieren"
+L[help_intro]="Die Befehle für ein Update des Betriebssystems in einem Container, Schritt für Schritt. Den Platzhalter <ID> durch die Nummer des Containers ersetzen. Alle Befehle la>
+L[help_filter_label]="Betriebssystem:"
+L[help_filter_all]="Alle anzeigen"
+L[help_os_all]="Alle Systeme"
+L[help_where_host]="auf dem Proxmox-Host"
+L[help_where_ct]="im Container"
+L[help_copy]="Kopieren"
+L[help_copied]="Kopiert"
+L[help_copy_failed]="Markiert – mit Strg+C kopieren"
+L[help_step_enter]="In den Container wechseln"
+L[help_expl_enter]="Öffnet eine root-Shell im Container. Die Befehle der Schritte 2 bis 6 werden dort eingegeben."
+L[help_step_refresh]="Paketlisten auffrischen"
+L[help_expl_refresh]="Lädt die aktuelle Liste der verfügbaren Pakete von den Paketquellen. Es wird noch nichts installiert."
+L[help_step_list]="Anstehende Updates anzeigen"
+L[help_expl_list]="Zeigt, welche Pakete aktualisiert würden. Der Schritt ändert nichts und kann übersprungen werden."
+L[help_step_install]="Updates installieren"
+L[help_expl_install]="Installiert alle verfügbaren Updates. Der Befehl zeigt vorher, was er tun wird, und fragt nach einer Bestätigung."
+L[help_step_autoremove]="Nicht mehr benötigte Pakete entfernen"
+L[help_expl_autoremove]="Entfernt Pakete, die nur als Abhängigkeit installiert wurden und von nichts mehr gebraucht werden."
+L[help_step_clean]="Paket-Cache leeren"
+L[help_expl_clean]="Löscht die heruntergeladenen Paketdateien und gibt Speicherplatz frei. Installierte Programme sind davon nicht betroffen."
+L[help_step_reboot]="Container neu starten"
+L[help_expl_reboot]="Vorher den Container mit „exit“ verlassen. Der Neustart sorgt dafür, dass alle Dienste die neuen Programmversionen verwenden. Der Kernel kommt vom Proxmox-Host >
+L[help_note_arch_refresh]="Entfällt. Bei Arch gehören Auffrischen und Installieren zusammen (Schritt 4); getrennt ausgeführt kann das System unbrauchbar werden."
+L[help_note_alpine_autoremove]="Entfällt. apk entfernt nicht mehr benötigte Pakete von selbst."
+L[help_note_suse_autoremove]="Kein eigener Befehl. „zypper packages --unneeded“ listet die Kandidaten auf."
+L[help_label_arch_list]="Arch Linux (braucht das Paket pacman-contrib)"
+L[help_scope]="Nicht enthalten ist der Wechsel auf eine neue Hauptversion des Betriebssystems, zum Beispiel von Debian 12 auf 13."
+
+L[meta_sched]="Automatische Prüfung nach Zeitplan „{cron}“."
+L[cfg_CRON_SCHEDULE]="Zeitplan der automatischen Prüfung als Cron-Ausdruck mit fünf Feldern: Minute, Stunde, Tag, Monat, Wochentag (0 = Sonntag)."
+L[cron_examples]="Beispiele"
+L[tip_cron_examples]="Täglich um 02:00 Uhr:\n   0 2 * * *\nWöchentlich, sonntags um 03:00 Uhr:\n   0 3 * * 0\nZweimal wöchentlich, montags und donnerstags um 02:30 Uhr:\n   30 2 * *>
+L[cron_guru]="Ausdruck auf crontab.guru prüfen"
+L[help_step_snap]="Vor dem Update: Snapshot anlegen"
+L[help_expl_snap]="Hält den aktuellen Stand des Containers fest, damit er sich nach einem misslungenen Update wiederherstellen lässt. „pre_update“ ist der frei wählbare Name des Sna>
+L[help_label_snap_create]="Snapshot anlegen"
+L[help_label_snap_list]="Vorhandene Snapshots anzeigen"
+L[help_step_rollback]="Falls etwas nicht mehr funktioniert: zurück zum Snapshot"
+L[help_expl_rollback]="Setzt den Container auf den Stand des Snapshots zurück. Alle Änderungen seit dem Snapshot gehen dabei verloren, auch neue Daten der App."
+L[help_step_delsnap]="Wenn alles läuft: Snapshot löschen"
+L[help_expl_delsnap]="Entfernt den Snapshot und gibt den belegten Speicherplatz frei. Danach ist kein Zurückrollen mehr möglich."
+
+L[btn_details]="Details ein- oder ausblenden"
+L[col_system]="System"
+
+L[cfg_saved_lang]="Die Einstellungen wurden gespeichert. Die Seiten sind schon in der neuen Sprache; die Tabelle des Reports folgt, sobald alle Container neu geprüft sind."
+L[cfg_lang_note]="Nach einer Änderung der Sprache werden alle Container neu geprüft, damit der Report vollständig in der neuen Sprache erscheint. Das kann einige Minuten dauern."
+L[cfg_applying]="Die Einstellungen werden übernommen. Die Seite lädt in wenigen Sekunden von selbst neu."
+L[cfg_applying_lang]="Die Einstellungen werden übernommen und alle Container in der neuen Sprache neu geprüft. Die Seite lädt zwischendurch von selbst neu; die Prüfung kann einige M>
+L[cfg_busy]="Gerade läuft eine Prüfung. Solange lassen sich die Einstellungen nicht ändern; die Seite gibt sie danach von selbst wieder frei."
+
+L[btn_snap_tip]="Snapshot von Container {id} anlegen"
+L[snap_prompt]="Snapshot von Container {id} ({name}) anlegen.\n\nName des Snapshots (Buchstaben, Ziffern, _ und -, am Anfang ein Buchstabe):"
+L[snap_badname]="Ungültiger Name. Erlaubt sind Buchstaben, Ziffern, _ und -, am Anfang ein Buchstabe, höchstens 40 Zeichen."
+L[snap_running]="Snapshot von Container {id} wird angelegt …"
+L[snap_ok]="Snapshot „{snap}“ von Container {id} wurde angelegt."
+L[snap_fail]="Snapshot von Container {id} konnte nicht angelegt werden: {msg}"
+L[note_last_snap]="Letzter Snapshot: {snap} ({date})"
+
+L[btn_snaplist_tip]="Snapshots von Container {id} anzeigen ({n})"
+L[btn_snapinfo_tip]="Anleitung: Snapshot von Container {id} zurückspielen oder löschen"
+L[col_snapshots]="Snapshots"
+L[snaplist_title]="Snapshots von Container {id} ({name})"
+L[snaplist_empty]="Für diesen Container gibt es noch keine Snapshots."
+L[snaplist_name]="Name"
+L[snaplist_date]="Angelegt"
+L[snaplist_note]="Stand der letzten Prüfung. Wie man einen Snapshot zurückspielt oder löscht, zeigt der Info-Knopf (i)."
+L[snapinfo_title]="Snapshot von Container {id} ({name}) zurückspielen oder löschen"
+L[snapinfo_intro]="Beides geht nur auf dem Proxmox-Host: mit den Befehlen unten oder in der Proxmox-Oberfläche unter Container → Snapshots. Diese Seite spielt keine Snapshots zurück>
+L[snapinfo_pick]="Snapshot:"
+L[snapinfo_none]="Für diesen Container gibt es noch keine Snapshots; die Befehle zeigen deshalb den Platzhalter <Name>."
+L[snapinfo_rb_title]="Zurückspielen"
+L[snapinfo_rb_expl]="Setzt den Container auf den Stand des Snapshots zurück. Alle Änderungen seit dem Snapshot gehen verloren, auch neue Daten der App. Auf ZFS geht das nur zum neue>
+L[snapinfo_del_title]="Löschen"
+L[snapinfo_del_expl]="Entfernt den Snapshot und gibt seinen Speicherplatz frei. Der Container selbst bleibt unverändert, nur zu diesem Stand kann er danach nicht mehr zurück."
+L[snapinfo_list_title]="Alle Snapshots auf dem Host anzeigen"
+L[btn_close]="Schließen"
