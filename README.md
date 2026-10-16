@@ -24,17 +24,16 @@ Checked per container:
 |--help|list all options|
 
 Apps that run neither via a community-script nor via Docker can be declared
-with a small file inside the container:
-  /etc/lxc-update-check.conf
-     name=Gitea
-     repo=go-gitea/gitea
-     version_cmd=gitea --version | awk '{print $3}'
-  (instead of version_cmd a fixed version=1.2.3 works too; for a community-scripts
-  app without /usr/bin/update the line script=<script name> is enough)
+with a small file inside the container:  
+/etc/lxc-update-check.conf  
+  name=Gitea  
+  repo=go-gitea/gitea  
+  version_cmd=gitea --version | awk '{print $3}'  
+>instead of version_cmd a fixed version=1.2.3 works too; for a community-scripts app without /usr/bin/update the line script=<script name> is enough
 
-Files after installation:
-  /etc/lxc-update-check/config         settings (port, language, exclusions …)
-  /etc/lxc-update-check/lang/*.lang    language files with all texts of the report
+Files after installation:  
+   /etc/lxc-update-check/config         settings (port, language, exclusions …)  
+   /etc/lxc-update-check/lang/*.lang    language files with all texts of the report  
 
 In the report: "Check now" re-checks everything, the arrow button (↑) re-checks a
 single container, "Settings" shows and changes the configuration (with the
