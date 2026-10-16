@@ -54,9 +54,11 @@ with a small file **inside the container**:
 >Instead of version_cmd a fixed version=1.2.3 works too; for a community-scripts app without /usr/bin/update the line script=<script name> is enough
 <br>
 
-Files after installation:  
-   /etc/lxc-update-check/config         settings (port, language, exclusions …)  
-   /etc/lxc-update-check/lang/*.lang    language files with all texts of the report  
+|Files after installation| |
+|:---|:---|
+|/etc/lxc-update-check/config|settings (port, language, exclusions …)|
+|/etc/lxc-update-check/lang/*.lang|language files with all texts of the report|
+|/var/www/lxc-updates/|HTML report site and assets|
 
 <br>
 
