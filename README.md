@@ -68,9 +68,16 @@ with a small file **inside the container**:
 In your browser: __<pve_ip>:8090__  
 
 Report page:
-"Check now" re-checks everything  
-the arrow button (↑) re-checks a single container  
-"Settings" shows and changes the configuration (with the password from /etc/lxc-update-check/web-password) and links to a help page.  
+|Button|Description|
+|:---|:---|
+|![Ceck Now](/resources/check_now.png)|Re-checks everything  |
+|![Settings](/resources/settings.png)|Shows and changes the configuration (with the password from /etc/lxc-update-check/web-password) and links to a help page.  |
+|![Show Packages](/resources/show_packages.png)|Shows all system packages with updates  |
+|![the arrow button (↑)](/resources/update.png)|Re-checks a single container  |
+|![Snapshot](/resources/snapshot.png)|Creates a snapshot if supported by filesystem  |
+|![List Snapshots](/resources/list_snapshots.png)|List existing snapshots on container (badge shows number of snapshots available)  |
+|![Info](/resources/info.png)|Info on how to maintain snapshots  |
+
 <br>
 
 >[!NOTE]
