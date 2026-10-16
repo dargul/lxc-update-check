@@ -65,6 +65,8 @@ with a small file **inside the container**:
 <br>
 
 ## How to use
+In your browser: __<pve_ip>:8090__  
+
 Report page:
 "Check now" re-checks everything  
 the arrow button (↑) re-checks a single container  
