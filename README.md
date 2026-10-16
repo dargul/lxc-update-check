@@ -20,7 +20,7 @@ Checked per container:
 ```
 chmod +x lxc-update-check.sh
 ```
-3. Initial installation of the HTML pages and cron job
+3. Initial installation of the web server, HTML pages and cron job
 ```
 ./lxc-update-check.sh --install
 ```
