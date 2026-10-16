@@ -1,5 +1,7 @@
 # lxc-update-check
 
+[![Latest Release](https://img.shields.io/github/v/release/dargul/lxc-update-check)](https://github.com/dargul/lxc-update-check/releases/latest)
+
 lxc-update-check.sh – checks all LXC containers of a proxmox host for updates
 and writes the result as an HTML report. VMs are not looked at.
 
