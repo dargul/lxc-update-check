@@ -1721,7 +1721,7 @@ add_row() {
     if [[ $id =~ ^[0-9]+$ ]] && [ "$state" = running ] && [ -n "$out" ]; then
         local hot=""; { [ "$app_upd" -gt 0 ] || [ "$pkgs" -gt 0 ]; } && hot=" hot"
         tag=$(esc "$(T btn_refresh_tip id="$id")")
-        action+=" <button class=\"up$hot\" data-id=\"$id\" data-name=\"$(esc "$name")\" title=\"$tag\" aria-label=\"$tag\">↑</button>"
+        action+=" <button class=\"up$hot\" data-id=\"$id\" data-name=\"$(esc "$name")\" title=\"$tag\" aria-label=\"$tag\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 19.5V5M5.5 11.5 12 5l6.5 6.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></button>"
     fi
     # Camera button: take a snapshot (only if all volumes lie on snapshot-capable storage)
     local s_ok s_name s_time s_all snapbtns=""
@@ -1952,6 +1952,9 @@ button.up {
   color: var(--accent); background: none; border: 1px solid var(--line); border-radius: 50%; cursor: pointer;
 }
 button.up.hot { color: var(--panel); background: var(--accent); border-color: var(--accent); }
+/* Drawn arrow instead of the text character: same size and weight in every font */
+button.up { display: inline-flex; align-items: center; justify-content: center; vertical-align: top; }
+button.up svg { width: 1.45rem; height: 1.45rem; }
 button.up:hover { border-color: var(--accent); }
 button.up:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 button.up:disabled { opacity: .45; cursor: progress; }
@@ -2183,6 +2186,7 @@ p.scope { color: var(--mute); }
   button.more:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   tr.ct.open button.more { transform: rotate(180deg); }
   button.up, button.snap { margin-left: 0; width: 2rem; height: 2rem; font-size: 1.15rem; }
+  button.up svg { width: 1.3rem; height: 1.3rem; }
   tr.detail { display: none; }
   tr.ct.open + tr.detail { display: block; }
   tr.detail > td { display: none; }
