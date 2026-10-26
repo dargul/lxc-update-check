@@ -75,7 +75,7 @@ Report page:
 |![Show Packages](/resources/show_packages.png)|Shows all system packages with updates  |
 |![the arrow button (↑)](/resources/update.png)|Re-checks a single container  |
 |![Snapshot](/resources/snapshot.png)|Creates a snapshot if supported by filesystem  |
-|![List Snapshots](/resources/list_snapshots.png)<&nbsp>![List Snapshots Badge](/resources/list_snapshots_badge.png)|List existing snapshots on container (badge shows number of snapshots available)  |
+|![List Snapshots](/resources/list_snapshots.png)<&nbsp;>![List Snapshots Badge](/resources/list_snapshots_badge.png)|List existing snapshots on container (badge shows number of snapshots available)  |
 |![Info](/resources/info.png)|Info on how to maintain snapshots  |
 
 <br>
