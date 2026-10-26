@@ -74,8 +74,8 @@ Report page:
 |![Settings](/resources/settings.png)|Shows and changes the configuration (with the password from /etc/lxc-update-check/web-password) and links to a help page.  |
 |![Show Packages](/resources/show_packages.png)|Shows all system packages with updates  |
 |![the arrow button (↑)](/resources/update.png)|Re-checks a single container  |
-|![Snapshot](/resources/snapshot.png)![Snapshot](/resources/snapshot.png)|Creates a snapshot if supported by filesystem  |
-|![List Snapshots](/resources/list_snapshots.png)|List existing snapshots on container (badge shows number of snapshots available)  |
+|![Snapshot](/resources/snapshot.png)|Creates a snapshot if supported by filesystem  |
+|![List Snapshots](/resources/list_snapshots.png)![List Snapshots Badge](/resources/list_snapshots_badge.png)|List existing snapshots on container (badge shows number of snapshots available)  |
 |![Info](/resources/info.png)|Info on how to maintain snapshots  |
 
 <br>
