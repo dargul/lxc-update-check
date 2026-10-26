@@ -33,9 +33,10 @@
 # In the report: "Check now" re-checks everything, the arrow button (↑) re-checks a
 # single container, "Settings" shows and changes the configuration (with the
 # password from /etc/lxc-update-check/web-password) and links to a help page.
-# The script installs no updates. The only change it can make is a snapshot that you
-# start yourself with the camera button (password required). Inside the containers a
-# scan merely refreshes the package lists (apt-get update etc.).
+# The script installs no updates. The only changes it can make are snapshots that you
+# start yourself: take one (camera button), roll back to one or delete one (snapshot
+# list) – each with a confirmation and the password. Inside the containers a scan
+# merely refreshes the package lists (apt-get update etc.).
 # The help page lists the commands to snapshot and update a container by hand.
 
 set -u
@@ -231,9 +232,9 @@ L[snaplist_title]="Snapshots von Container {id} ({name})"
 L[snaplist_empty]="Für diesen Container gibt es noch keine Snapshots."
 L[snaplist_name]="Name"
 L[snaplist_date]="Angelegt"
-L[snaplist_note]="Stand der letzten Prüfung. Wie man einen Snapshot zurückspielt oder löscht, zeigt der Info-Knopf (i)."
+L[snaplist_note]="Stand der letzten Prüfung. Zurückspielen und Löschen fragen vorher nach und verlangen das Passwort. Die Befehle für den Proxmox-Host zeigt der Info-Knopf (i)."
 L[snapinfo_title]="Snapshot von Container {id} ({name}) zurückspielen oder löschen"
-L[snapinfo_intro]="Beides geht nur auf dem Proxmox-Host: mit den Befehlen unten oder in der Proxmox-Oberfläche unter Container → Snapshots. Diese Seite spielt keine Snapshots zurück und löscht keine."
+L[snapinfo_intro]="Beides geht direkt in der Snapshot-Liste (☰). Auf dem Proxmox-Host geht es auch mit den Befehlen unten oder in der Proxmox-Oberfläche unter Container → Snapshots."
 L[snapinfo_pick]="Snapshot:"
 L[snapinfo_none]="Für diesen Container gibt es noch keine Snapshots; die Befehle zeigen deshalb den Platzhalter <Name>."
 L[snapinfo_rb_title]="Zurückspielen"
@@ -242,6 +243,19 @@ L[snapinfo_del_title]="Löschen"
 L[snapinfo_del_expl]="Entfernt den Snapshot und gibt seinen Speicherplatz frei. Der Container selbst bleibt unverändert, nur zu diesem Stand kann er danach nicht mehr zurück."
 L[snapinfo_list_title]="Alle Snapshots auf dem Host anzeigen"
 L[btn_close]="Schließen"
+L[snap_btn_rollback]="Zurückspielen"
+L[snap_btn_delete]="Löschen"
+L[confirm_delete]="Snapshot „{snap}“ von Container {id} ({name}) löschen?\n\nDer Snapshot wird endgültig entfernt; zu diesem Stand kann der Container danach nicht mehr zurück. Der Container selbst bleibt unverändert."
+L[confirm_rollback]="Container {id} ({name}) auf den Snapshot „{snap}“ vom {date} zurücksetzen?\n\nAlle Änderungen seit diesem Snapshot gehen verloren, auch neue Daten der App. Läuft der Container, wird er dafür heruntergefahren und danach wieder gestartet."
+L[confirm_rollback_newer]="\n\nAchtung: Es gibt neuere Snapshots ({list}). Auf ZFS schlägt das Zurückspielen dann fehl; sie müssten vorher gelöscht werden."
+L[confirm_rollback_type]="Zur Bestätigung den Namen des Snapshots eingeben:\n\n{snap}"
+L[confirm_mismatch]="Der eingegebene Name stimmt nicht überein. Es wurde nichts geändert."
+L[del_running]="Snapshot von Container {id} wird gelöscht …"
+L[rb_running]="Container {id} wird auf den Snapshot zurückgesetzt …"
+L[del_ok]="Snapshot „{snap}“ von Container {id} wurde gelöscht."
+L[del_fail]="Snapshot „{snap}“ von Container {id} konnte nicht gelöscht werden: {msg}"
+L[rb_ok]="Container {id} wurde auf den Snapshot „{snap}“ zurückgesetzt."
+L[rb_fail]="Container {id} konnte nicht auf den Snapshot „{snap}“ zurückgesetzt werden: {msg}"
 
 # Statusfenster während der Prüfung
 L[prog_title]="Prüfung läuft"
@@ -465,9 +479,9 @@ L[snaplist_title]="Snapshots of container {id} ({name})"
 L[snaplist_empty]="This container has no snapshots yet."
 L[snaplist_name]="Name"
 L[snaplist_date]="Taken"
-L[snaplist_note]="As of the last check. The info button (i) shows how to roll back or delete a snapshot."
+L[snaplist_note]="As of the last check. Roll back and delete ask for confirmation and require the password. The info button (i) shows the commands for the Proxmox host."
 L[snapinfo_title]="Roll back or delete a snapshot of container {id} ({name})"
-L[snapinfo_intro]="Both are done on the Proxmox host only: with the commands below or in the Proxmox web interface under container → Snapshots. This page neither rolls back nor deletes snapshots."
+L[snapinfo_intro]="Both can be done right in the snapshot list (☰). On the Proxmox host they also work with the commands below or in the Proxmox web interface under container → Snapshots."
 L[snapinfo_pick]="Snapshot:"
 L[snapinfo_none]="This container has no snapshots yet, so the commands show the placeholder <Name>."
 L[snapinfo_rb_title]="Roll back"
@@ -476,6 +490,19 @@ L[snapinfo_del_title]="Delete"
 L[snapinfo_del_expl]="Removes the snapshot and frees its space. The container itself stays as it is; it just cannot return to that state afterwards."
 L[snapinfo_list_title]="List all snapshots on the host"
 L[btn_close]="Close"
+L[snap_btn_rollback]="Roll back"
+L[snap_btn_delete]="Delete"
+L[confirm_delete]="Delete snapshot \"{snap}\" of container {id} ({name})?\n\nThe snapshot is removed for good; the container cannot return to that state afterwards. The container itself stays as it is."
+L[confirm_rollback]="Reset container {id} ({name}) to snapshot \"{snap}\" from {date}?\n\nAll changes since this snapshot are lost, including new data of the app. If the container is running, it is shut down for this and started again afterwards."
+L[confirm_rollback_newer]="\n\nCaution: there are newer snapshots ({list}). On ZFS the rollback then fails; they would have to be deleted first."
+L[confirm_rollback_type]="To confirm, type the name of the snapshot:\n\n{snap}"
+L[confirm_mismatch]="The name you typed does not match. Nothing was changed."
+L[del_running]="Deleting a snapshot of container {id} …"
+L[rb_running]="Resetting container {id} to the snapshot …"
+L[del_ok]="Snapshot \"{snap}\" of container {id} was deleted."
+L[del_fail]="Snapshot \"{snap}\" of container {id} could not be deleted: {msg}"
+L[rb_ok]="Container {id} was reset to snapshot \"{snap}\"."
+L[rb_fail]="Container {id} could not be reset to snapshot \"{snap}\": {msg}"
 
 # Status window during a check
 L[prog_title]="Check in progress"
@@ -597,33 +624,40 @@ T() {
     printf '%s' "$s"
 }
 
-# Favicon: white arrow on a teal field, matching the mark in the page title.
+# Favicon: white arrow in a teal circle, drawn like the arrow button and the title mark.
 # --install writes it as favicon.svg and favicon.ico next to the report.
 favicon_svg() { cat <<'SVG'
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect x="2" y="2" width="60" height="60" rx="14" fill="#0f6e8c"/>
-  <path d="M32 11 50 31H39v21H25V31H14z" fill="#fff"/>
+  <circle cx="32" cy="32" r="30" fill="#0f6e8c"/>
+  <path d="M32 50V18M17.5 32.5 32 18l14.5 14.5" fill="none" stroke="#fff" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 SVG
 }
 favicon_ico() { base64 -d <<'ICO'
-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
+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
 ICO
 }
 
@@ -632,6 +666,8 @@ ICO
 #   POST /refresh?id=<n>  re-check one container only (no password)
 #   POST /config          save settings, JSON (password)
 #   POST /snapshot?id=<n>&name=<s>  take a snapshot of a container (password)
+#   POST /snapdel?id=<n>&name=<s>   delete a snapshot (password)
+#   POST /rollback?id=<n>&name=<s>  roll a container back to a snapshot (password)
 # It runs unprivileged, validates password and input and only drops a job file.
 # The job itself is executed by systemd via "lxc-update-check --dispatch".
 web_py() { cat <<'WEBPY'
@@ -692,10 +728,10 @@ class Handler(SimpleHTTPRequestHandler):
         n = int(self.headers.get("Content-Length") or 0)
         raw = self.rfile.read(min(n, 65536)) if n else b""
         path, _, query = self.path.partition("?")
-        if path not in ("/scan", "/refresh", "/config", "/snapshot"):
+        if path not in ("/scan", "/refresh", "/config", "/snapshot", "/snapdel", "/rollback"):
             return self.reply(404, error="notfound")
         lines = ["action=" + path[1:]]
-        if path in ("/config", "/snapshot"):
+        if path in ("/config", "/snapshot", "/snapdel", "/rollback"):
             pw = password()
             if not pw:
                 return self.reply(403, error="nopassword")
@@ -707,7 +743,7 @@ class Handler(SimpleHTTPRequestHandler):
             if not m:
                 return self.reply(400, error="invalid", field="id")
             lines.append("id=" + m.group(1))
-        if path == "/snapshot":
+        if path in ("/snapshot", "/snapdel", "/rollback"):
             m = re.fullmatch(r"id=([0-9]{1,9})&name=([A-Za-z][A-Za-z0-9_-]{0,39})", query)
             if not m:
                 return self.reply(400, error="invalid", field="name")
@@ -938,6 +974,9 @@ do_dispatch() {
         snapshot)
             [[ $id =~ ^[0-9]+$ ]] && [[ $sname =~ ^[A-Za-z][A-Za-z0-9_-]{0,39}$ ]] || exit 1
             exec bash "$0" --snapshot "$id" "$sname" ;;
+        snapdel|rollback)
+            [[ $id =~ ^[0-9]+$ ]] && [[ $sname =~ ^[A-Za-z][A-Za-z0-9_-]{0,39}$ ]] || exit 1
+            exec bash "$0" "--$action" "$id" "$sname" ;;
         config)
             # Every setting is validated again here before it goes into the file
             [ -f "$CONFIG" ] || : > "$CONFIG"
@@ -975,13 +1014,16 @@ Usage: lxc-update-check [option]
   --refresh <CT-ID>              check a single container again
   --snapshot <CT-ID> <name>      take a snapshot of a container, then check it again
                                  (name: letters, digits, _ and -, starting with a letter)
+  --rollback <CT-ID> <name>      reset a container to a snapshot (a running container is
+                                 shut down and started again), then check it again
+  --snapdel <CT-ID> <name>       delete a snapshot, then check the container again
   --help                         show this help
 
 Settings: $ETC/config    Report: $OUT_DIR/index.html    Log of the cron job: $LOG
 EOF
 }
 
-REFRESH_ID=""; RENDER=""; SNAP_ID=""; SNAP_NAME=""; SNAP_OK=""; SNAP_MSG=""
+REFRESH_ID=""; RENDER=""; SNAP_ID=""; SNAP_NAME=""; SNAP_OK=""; SNAP_MSG=""; SNAP_OP=create
 case "${1:-}" in
     --help|-h)   usage; exit 0 ;;
     --install)   do_install;   exit 0 ;;
@@ -996,6 +1038,11 @@ case "${1:-}" in
         { [[ ${2:-} =~ ^[0-9]+$ ]] && [[ ${3:-} =~ ^[A-Za-z][A-Za-z0-9_-]{0,39}$ ]]; } \
             || { echo "Usage: $0 --snapshot <CT-ID> <name>   (name: letters, digits, _ and -, starting with a letter)" >&2; exit 1; }
         SNAP_ID=$2; SNAP_NAME=$3; REFRESH_ID=$2 ;;      # afterwards the container is re-checked
+    --snapdel|--rollback)
+        { [[ ${2:-} =~ ^[0-9]+$ ]] && [[ ${3:-} =~ ^[A-Za-z][A-Za-z0-9_-]{0,39}$ ]]; } \
+            || { echo "Usage: $0 $1 <CT-ID> <snapshot name>" >&2; exit 1; }
+        SNAP_ID=$2; SNAP_NAME=$3; REFRESH_ID=$2
+        [ "$1" = --snapdel ] && SNAP_OP=delete || SNAP_OP=rollback ;;
     "") ;;
     *) usage >&2; exit 1 ;;
 esac
@@ -1155,6 +1202,8 @@ ACTION=scan
 [ -n "$REFRESH_ID" ] && ACTION=refresh
 [ -n "$RENDER" ] && ACTION=render
 [ -n "$SNAP_ID" ] && ACTION=snapshot
+[ "$SNAP_OP" = delete ] && ACTION=snapdel
+[ "$SNAP_OP" = rollback ] && ACTION=rollback
 # Progress for the status window: phase, step x of y, current container, results
 P_PHASE=start; P_STEP=0; P_TOTAL=0; P_ID=""; P_NAME=""; P_LOG=""
 jesc() {
@@ -1164,7 +1213,7 @@ jesc() {
 }
 write_status() {
     local snap=null
-    [ -n "$SNAP_OK" ] && snap="{\"id\":\"$SNAP_ID\",\"name\":\"$SNAP_NAME\",\"ok\":$([ "$SNAP_OK" = 1 ] && echo true || echo false),\"msg\":\"$(jesc "$SNAP_MSG")\"}"
+    [ -n "$SNAP_OK" ] && snap="{\"op\":\"$SNAP_OP\",\"id\":\"$SNAP_ID\",\"name\":\"$SNAP_NAME\",\"ok\":$([ "$SNAP_OK" = 1 ] && echo true || echo false),\"msg\":\"$(jesc "$SNAP_MSG")\"}"
     printf '{"running":%s,"generated":%s,"action":"%s","id":"%s","phase":"%s","step":%s,"total":%s,"cur_id":"%s","cur_name":"%s","log":[%s],"snap":%s}\n' \
         "$1" "$2" "$ACTION" "$REFRESH_ID" "$P_PHASE" "$P_STEP" "$P_TOTAL" \
         "$(jesc "$P_ID")" "$(jesc "$P_NAME")" "$P_LOG" "$snap" > "$OUT_DIR/.status.tmp" \
@@ -1489,6 +1538,36 @@ snap_info() {
 }
 SNAPI="0||"     # snapshot info of the row being built (set before add_row)
 
+# do_snapop <delete|rollback> <id> <name> – deletes a snapshot or rolls the container
+# back to it; result in SNAP_OK / SNAP_MSG. A running container is shut down for the
+# rollback and started again afterwards (also when the rollback fails).
+do_snapop() {
+    local op=$1 id=$2 name=$3 out="" running=0
+    P_PHASE=snapshot; P_ID=$id; write_status true "$GEN"
+    echo "[$(date '+%F %T')] ${op^} of snapshot $name of container $id"
+    if ! grep -qx "\[$name\]" "$PVE_DIR/lxc/$id.conf" 2>/dev/null; then
+        SNAP_OK=0; SNAP_MSG="snapshot not found"
+    elif [ "$op" = delete ]; then
+        if out=$(timeout 600 pct delsnapshot "$id" "$name" 2>&1); then SNAP_OK=1; else SNAP_OK=0; fi
+    else
+        pct status "$id" 2>/dev/null | grep -q running && running=1
+        if [ "$running" = 1 ]; then
+            echo "  shutting down container $id"
+            timeout 150 pct shutdown "$id" --timeout 120 >/dev/null 2>&1 || timeout 60 pct stop "$id" >/dev/null 2>&1
+        fi
+        if out=$(timeout 900 pct rollback "$id" "$name" 2>&1); then SNAP_OK=1; else SNAP_OK=0; fi
+        if [ "$running" = 1 ]; then
+            echo "  starting container $id"
+            timeout 120 pct start "$id" >/dev/null 2>&1 || echo "  container $id could not be started"
+        fi
+    fi
+    if [ "$SNAP_OK" = 0 ] && [ -z "$SNAP_MSG" ]; then
+        SNAP_MSG=$(printf '%s\n' "$out" | grep -v '^[[:space:]]*$' | tail -n1 | cut -c1-300)
+        [ -n "$SNAP_MSG" ] || SNAP_MSG="pct $op failed"
+    fi
+    if [ "$SNAP_OK" = 1 ]; then echo "  done"; else echo "  failed: $SNAP_MSG"; fi
+}
+
 # do_snapshot <id> <name> – takes the snapshot; result in SNAP_OK / SNAP_MSG
 do_snapshot() {
     local out
@@ -1773,7 +1852,9 @@ add_row() {
 START=$(date +%s)
 echo "[$(date '+%F %T')] Scan started"
 
-[ -n "$SNAP_ID" ] && do_snapshot "$SNAP_ID" "$SNAP_NAME"
+if [ -n "$SNAP_ID" ]; then
+    if [ "$SNAP_OP" = create ]; then do_snapshot "$SNAP_ID" "$SNAP_NAME"; else do_snapop "$SNAP_OP" "$SNAP_ID" "$SNAP_NAME"; fi
+fi
 
 mapfile -t CTS < <(pct list 2>/dev/null | awk 'NR > 1 { print $1 "|" $2 "|" $NF }')
 
@@ -1901,10 +1982,11 @@ header.top h1, header.top p { white-space: nowrap; }
 .btn:disabled { opacity: .6; cursor: progress; }
 #scanmsg { font-size: .85rem; color: var(--bad); white-space: pre-line; max-width: 24rem; }
 h1 { display: flex; align-items: center; gap: .65rem; margin: 0 0 1rem; font-size: clamp(1.6rem, 3.5vw, 2.1rem); line-height: 1.1; font-weight: 750; letter-spacing: -.025em; }
+h1 .mark svg { width: 66%; height: 66%; }
 h1 .mark {
   display: inline-flex; align-items: center; justify-content: center; flex: none;
   width: 1.25em; height: 1.25em; font-size: 1em; letter-spacing: 0;
-  color: var(--panel); background: var(--accent); border-radius: .28em;
+  color: var(--panel); background: var(--accent); border-radius: 50%;
 }
 header p.headline { margin: 0 0 .2rem; font-size: 1.25rem; font-weight: 650; color: var(--ink); }
 header p { margin: 0; color: var(--mute); }
@@ -2001,6 +2083,10 @@ dialog#snapdlg h3 { margin: 1.1rem 0 .3rem; font-size: 1rem; }
 dialog#snapdlg p { margin: 0 0 .6rem; }
 dialog#snapdlg .small { font-size: .85rem; margin-top: .8rem; }
 dialog#snapdlg table.snaps { width: 100%; }
+dialog#snapdlg td.snapacts { text-align: right; white-space: nowrap; font-family: inherit; }
+dialog#snapdlg td.snapacts button { margin-left: .35rem; }
+button.tgl.danger { color: var(--bad); }
+button.tgl.danger:hover { border-color: var(--bad); }
 dialog#snapdlg label.pick { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; margin: .3rem 0 .4rem; font-weight: 600; }
 dialog#snapdlg select { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: .3rem .5rem; max-width: 100%; }
 .cmd1 { display: flex; gap: .6rem; align-items: center; margin: .35rem 0; }
@@ -2379,7 +2465,7 @@ cat <<HTML
 <main>
 <header>
   <div>
-    <h1><span class="mark" aria-hidden="true">↑</span>$(esc "$(T app_title)")</h1>
+    <h1><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19.5V5M5.5 11.5 12 5l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>$(esc "$(T app_title)")</h1>
     <p class="headline">$(esc "$(T cfg_title)")</p>
     <p>$(esc "$(T cfg_intro dir="$ETC")")</p>
   </div>
@@ -2579,7 +2665,7 @@ write_help() {
 <main>
 <header>
   <div>
-    <h1><span class="mark" aria-hidden="true">↑</span>$(esc "$(T app_title)")</h1>
+    <h1><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19.5V5M5.5 11.5 12 5l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>$(esc "$(T app_title)")</h1>
     <p class="headline">$(esc "$(T help_title)")</p>
     <p>$(esc "$(T help_intro)")</p>
   </div>
@@ -2685,11 +2771,11 @@ TMP=$(mktemp "$OUT_DIR/.index.XXXXXX")
 {
 page_head "$(T app_title)"
 cat <<HTML
-<body$(body_attrs)$(dattr show btn_show)$(dattr hide btn_hide)$(dattr scan btn_scan)$(dattr scanning btn_scanning)$(dattr prog-starting prog_starting)$(dattr prog-step prog_step)$(dattr prog-finishing prog_finishing)$(dattr snap-prompt snap_prompt)$(dattr snap-badname snap_badname)$(dattr snap-running snap_running)$(dattr snap-ok snap_ok)$(dattr snap-fail snap_fail)$(dattr snaplist-title snaplist_title)$(dattr snaplist-empty snaplist_empty)$(dattr snaplist-name snaplist_name)$(dattr snaplist-date snaplist_date)$(dattr snaplist-note snaplist_note)$(dattr snapinfo-title snapinfo_title)$(dattr snapinfo-intro snapinfo_intro)$(dattr snapinfo-pick snapinfo_pick)$(dattr snapinfo-none snapinfo_none)$(dattr snapinfo-rb-title snapinfo_rb_title)$(dattr snapinfo-rb-expl snapinfo_rb_expl)$(dattr snapinfo-del-title snapinfo_del_title)$(dattr snapinfo-del-expl snapinfo_del_expl)$(dattr snapinfo-list-title snapinfo_list_title)$(dattr copy help_copy)$(dattr copied help_copied)$(dattr copy-failed help_copy_failed)>
+<body$(body_attrs)$(dattr show btn_show)$(dattr hide btn_hide)$(dattr scan btn_scan)$(dattr scanning btn_scanning)$(dattr prog-starting prog_starting)$(dattr prog-step prog_step)$(dattr prog-finishing prog_finishing)$(dattr snap-prompt snap_prompt)$(dattr snap-badname snap_badname)$(dattr snap-running snap_running)$(dattr snap-ok snap_ok)$(dattr snap-btn-rollback snap_btn_rollback)$(dattr snap-btn-delete snap_btn_delete)$(dattr confirm-delete confirm_delete)$(dattr confirm-rollback confirm_rollback)$(dattr confirm-rollback-newer confirm_rollback_newer)$(dattr confirm-rollback-type confirm_rollback_type)$(dattr confirm-mismatch confirm_mismatch)$(dattr del-running del_running)$(dattr rb-running rb_running)$(dattr del-ok del_ok)$(dattr del-fail del_fail)$(dattr rb-ok rb_ok)$(dattr rb-fail rb_fail)$(dattr snap-fail snap_fail)$(dattr snaplist-title snaplist_title)$(dattr snaplist-empty snaplist_empty)$(dattr snaplist-name snaplist_name)$(dattr snaplist-date snaplist_date)$(dattr snaplist-note snaplist_note)$(dattr snapinfo-title snapinfo_title)$(dattr snapinfo-intro snapinfo_intro)$(dattr snapinfo-pick snapinfo_pick)$(dattr snapinfo-none snapinfo_none)$(dattr snapinfo-rb-title snapinfo_rb_title)$(dattr snapinfo-rb-expl snapinfo_rb_expl)$(dattr snapinfo-del-title snapinfo_del_title)$(dattr snapinfo-del-expl snapinfo_del_expl)$(dattr snapinfo-list-title snapinfo_list_title)$(dattr copy help_copy)$(dattr copied help_copied)$(dattr copy-failed help_copy_failed)>
 <main>
 <header class="top">
   <div>
-    <h1><span class="mark" aria-hidden="true">↑</span>$(esc "$(T app_title)")</h1>
+    <h1><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19.5V5M5.5 11.5 12 5l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>$(esc "$(T app_title)")</h1>
     <p class="headline">$(esc "$HEADLINE")</p>
     <p>$(esc "$SUMMARY")</p>
     <p class="meta">$(esc "$META")</p>
@@ -2746,7 +2832,7 @@ var progErr = document.getElementById('progerr');
 function showProgress(s) {
   var pct = 0, cur = B.progStarting;
   if (s && s.phase === 'snapshot') {
-    cur = B.snapRunning.replace('{id}', s.cur_id);
+    cur = (s.action === 'snapdel' ? B.delRunning : s.action === 'rollback' ? B.rbRunning : B.snapRunning).replace('{id}', s.cur_id);
   } else if (s && s.phase === 'write') {
     pct = 100; cur = B.progFinishing;
   } else if (s && s.total > 0 && s.step > 0) {
@@ -2834,20 +2920,46 @@ function openSnapDlg(title) {
 }
 document.querySelectorAll('button.snaplist').forEach(function (b) {
   b.addEventListener('click', function () {
-    var list = snapList(b);
-    openSnapDlg(B.snaplistTitle.replace('{id}', b.dataset.id).replace('{name}', b.dataset.name));
+    var list = snapList(b), id = b.dataset.id, cname = b.dataset.name;
+    openSnapDlg(B.snaplistTitle.replace('{id}', id).replace('{name}', cname));
     if (!list.length) { sbody.appendChild(el('p', 'mute', B.snaplistEmpty)); }
     else {
       var t = el('table', 'pk snaps'), h = el('tr');
-      h.appendChild(el('th', '', B.snaplistName)); h.appendChild(el('th', '', B.snaplistDate));
+      h.appendChild(el('th', '', B.snaplistName)); h.appendChild(el('th', '', B.snaplistDate)); h.appendChild(el('th'));
       var th = el('thead'); th.appendChild(h); t.appendChild(th);
       var tb = el('tbody');
-      list.forEach(function (s) { var r = el('tr'); r.appendChild(el('td', '', s.name)); r.appendChild(el('td', '', fmtTime(s.time))); tb.appendChild(r); });
+      list.forEach(function (s, i) {
+        var r = el('tr'), act = el('td', 'snapacts');
+        r.appendChild(el('td', '', s.name)); r.appendChild(el('td', '', fmtTime(s.time)));
+        var rb = el('button', 'tgl', B.snapBtnRollback), del = el('button', 'tgl danger', B.snapBtnDelete);
+        rb.addEventListener('click', function () { snapOp('rollback', id, cname, s, list.slice(0, i)); });
+        del.addEventListener('click', function () { snapOp('delete', id, cname, s, []); });
+        act.appendChild(rb); act.appendChild(del); r.appendChild(act); tb.appendChild(r);
+      });
       t.appendChild(tb); sbody.appendChild(t);
     }
     sbody.appendChild(el('p', 'mute small', B.snaplistNote));
   });
 });
+// Delete / roll back: always ask first; a rollback also wants the snapshot name typed in
+function snapOp(op, id, cname, s, newer) {
+  var fill = function (t) { return t.replace('{id}', id).replace('{name}', cname).replace('{snap}', s.name).replace('{date}', fmtTime(s.time)); };
+  if (op === 'delete') {
+    if (!window.confirm(fill(B.confirmDelete))) { return; }
+  } else {
+    var text = fill(B.confirmRollback);
+    if (newer.length) { text += B.confirmRollbackNewer.replace('{list}', newer.map(function (n) { return n.name; }).join(', ')); }
+    if (!window.confirm(text)) { return; }
+    var typed = window.prompt(fill(B.confirmRollbackType), '');
+    if (typed === null) { return; }
+    if (typed.trim() !== s.name) { window.alert(B.confirmMismatch); return; }
+  }
+  sdlg.close();
+  snapBox.hidden = true;
+  try { sessionStorage.setItem('lxc-snap', id); } catch (e) {}
+  var url = (op === 'delete' ? 'snapdel' : 'rollback') + '?id=' + id + '&name=' + encodeURIComponent(s.name);
+  run(url, true, (op === 'delete' ? B.delRunning : B.rbRunning).replace('{id}', id));
+}
 document.querySelectorAll('button.snapinfo').forEach(function (b) {
   b.addEventListener('click', function () {
     var id = b.dataset.id, list = snapList(b);
@@ -2912,7 +3024,8 @@ document.querySelectorAll('button.snap').forEach(function (b) {
       if (s.running || !s.snap || s.snap.id !== want) { return; }
       try { sessionStorage.removeItem('lxc-snap'); } catch (e) {}
       snapBox.className = (s.snap.ok ? 'okbox' : 'errbox') + ' top';
-      snapBox.textContent = (s.snap.ok ? B.snapOk : B.snapFail).replace('{id}', s.snap.id)
+      var msgs = { create: [B.snapOk, B.snapFail], 'delete': [B.delOk, B.delFail], rollback: [B.rbOk, B.rbFail] }[s.snap.op || 'create'];
+      snapBox.textContent = (s.snap.ok ? msgs[0] : msgs[1]).replace('{id}', s.snap.id)
         .replace('{snap}', s.snap.name).replace('{msg}', s.snap.msg);
       snapBox.hidden = false;
     })
