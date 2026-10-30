@@ -259,6 +259,9 @@ L[rb_fail]="Container {id} konnte nicht auf den Snapshot „{snap}“ zurückges
 
 # Statusfenster während der Prüfung
 L[prog_title]="Prüfung läuft"
+L[prog_title_snap]="Snapshot wird angelegt …"
+L[prog_title_del]="Snapshot wird gelöscht …"
+L[prog_title_rb]="Snapshot wird zurückgespielt …"
 L[prog_starting]="Prüfung wird gestartet …"
 L[prog_step]="{n} von {t}: {name}"
 L[prog_finishing]="Report wird geschrieben …"
@@ -506,6 +509,9 @@ L[rb_fail]="Container {id} could not be reset to snapshot \"{snap}\": {msg}"
 
 # Status window during a check
 L[prog_title]="Check in progress"
+L[prog_title_snap]="Creating snapshot …"
+L[prog_title_del]="Deleting snapshot …"
+L[prog_title_rb]="Rolling back snapshot …"
 L[prog_starting]="Starting the check …"
 L[prog_step]="{n} of {t}: {name}"
 L[prog_finishing]="Writing the report …"
@@ -2233,7 +2239,7 @@ p.scope { color: var(--mute); }
     display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr) auto;
     gap: .15rem .6rem; align-items: start;
   }
-  .mhead { padding: .5rem .7rem .5rem .85rem; font-size: .8rem; font-weight: 600; color: var(--mute); border-bottom: 2px solid var(--line); }
+  .mhead { padding: .5rem .7rem .5rem .85rem; font-size: .8rem; font-weight: 600; color: var(--mute); border-bottom: 3px solid var(--line); }
   tr.ct { padding: .55rem .7rem .55rem .85rem; border-top: 1px solid var(--line); box-shadow: inset 4px 0 0 var(--stripe, transparent); }
   tbody tr.ct:first-child { border-top: 0; }
   tr.ct:hover > td, tr.ct:hover + tr.detail > td { background: none; }
@@ -2290,6 +2296,22 @@ p.scope { color: var(--mute); }
   table.cfg td:last-child { color: var(--mute); }
   table.cfg code { word-break: break-all; }
   .doc pre, .cmd code { max-width: 100%; }
+}
+/* Report: the part above the table stays in place; only the table scrolls, and its
+   column headings stay visible at the top of it */
+body.report { display: flex; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; box-sizing: border-box; }
+body.report > main { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+body.report header, body.report #snapres { flex: none; }
+body.report .wrap { flex: 1 1 auto; min-height: 0; overflow: auto; overscroll-behavior: contain; }
+body.report #ct thead th { position: sticky; top: 0; z-index: 2; background: var(--panel); border-bottom: 0; box-shadow: inset 0 -3px 0 var(--line); }
+body.report #ct thead th:last-child { box-shadow: inset 0 -3px 0 var(--line), -8px 0 8px -8px rgba(0, 0, 0, .25); }
+body.report #ct thead th:last-child { z-index: 3; }
+body.report .mhead { position: sticky; top: 0; z-index: 2; background: var(--panel); }
+/* Very low windows (e.g. a phone held sideways): normal page scrolling instead */
+@media (max-height: 520px) {
+  body.report { display: block; height: auto; overflow: visible; }
+  body.report > main { display: block; }
+  body.report .wrap { overflow: visible; overflow-x: auto; }
 }
 CSS
 }
@@ -2771,7 +2793,7 @@ TMP=$(mktemp "$OUT_DIR/.index.XXXXXX")
 {
 page_head "$(T app_title)"
 cat <<HTML
-<body$(body_attrs)$(dattr show btn_show)$(dattr hide btn_hide)$(dattr scan btn_scan)$(dattr scanning btn_scanning)$(dattr prog-starting prog_starting)$(dattr prog-step prog_step)$(dattr prog-finishing prog_finishing)$(dattr snap-prompt snap_prompt)$(dattr snap-badname snap_badname)$(dattr snap-running snap_running)$(dattr snap-ok snap_ok)$(dattr snap-btn-rollback snap_btn_rollback)$(dattr snap-btn-delete snap_btn_delete)$(dattr confirm-delete confirm_delete)$(dattr confirm-rollback confirm_rollback)$(dattr confirm-rollback-newer confirm_rollback_newer)$(dattr confirm-rollback-type confirm_rollback_type)$(dattr confirm-mismatch confirm_mismatch)$(dattr del-running del_running)$(dattr rb-running rb_running)$(dattr del-ok del_ok)$(dattr del-fail del_fail)$(dattr rb-ok rb_ok)$(dattr rb-fail rb_fail)$(dattr snap-fail snap_fail)$(dattr snaplist-title snaplist_title)$(dattr snaplist-empty snaplist_empty)$(dattr snaplist-name snaplist_name)$(dattr snaplist-date snaplist_date)$(dattr snaplist-note snaplist_note)$(dattr snapinfo-title snapinfo_title)$(dattr snapinfo-intro snapinfo_intro)$(dattr snapinfo-pick snapinfo_pick)$(dattr snapinfo-none snapinfo_none)$(dattr snapinfo-rb-title snapinfo_rb_title)$(dattr snapinfo-rb-expl snapinfo_rb_expl)$(dattr snapinfo-del-title snapinfo_del_title)$(dattr snapinfo-del-expl snapinfo_del_expl)$(dattr snapinfo-list-title snapinfo_list_title)$(dattr copy help_copy)$(dattr copied help_copied)$(dattr copy-failed help_copy_failed)>
+<body class="report"$(body_attrs)$(dattr show btn_show)$(dattr hide btn_hide)$(dattr scan btn_scan)$(dattr scanning btn_scanning)$(dattr prog-starting prog_starting)$(dattr prog-step prog_step)$(dattr prog-finishing prog_finishing)$(dattr snap-prompt snap_prompt)$(dattr snap-badname snap_badname)$(dattr snap-running snap_running)$(dattr snap-ok snap_ok)$(dattr prog-title prog_title)$(dattr prog-title-snap prog_title_snap)$(dattr prog-title-del prog_title_del)$(dattr prog-title-rb prog_title_rb)$(dattr snap-btn-rollback snap_btn_rollback)$(dattr snap-btn-delete snap_btn_delete)$(dattr confirm-delete confirm_delete)$(dattr confirm-rollback confirm_rollback)$(dattr confirm-rollback-newer confirm_rollback_newer)$(dattr confirm-rollback-type confirm_rollback_type)$(dattr confirm-mismatch confirm_mismatch)$(dattr del-running del_running)$(dattr rb-running rb_running)$(dattr del-ok del_ok)$(dattr del-fail del_fail)$(dattr rb-ok rb_ok)$(dattr rb-fail rb_fail)$(dattr snap-fail snap_fail)$(dattr snaplist-title snaplist_title)$(dattr snaplist-empty snaplist_empty)$(dattr snaplist-name snaplist_name)$(dattr snaplist-date snaplist_date)$(dattr snaplist-note snaplist_note)$(dattr snapinfo-title snapinfo_title)$(dattr snapinfo-intro snapinfo_intro)$(dattr snapinfo-pick snapinfo_pick)$(dattr snapinfo-none snapinfo_none)$(dattr snapinfo-rb-title snapinfo_rb_title)$(dattr snapinfo-rb-expl snapinfo_rb_expl)$(dattr snapinfo-del-title snapinfo_del_title)$(dattr snapinfo-del-expl snapinfo_del_expl)$(dattr snapinfo-list-title snapinfo_list_title)$(dattr copy help_copy)$(dattr copied help_copied)$(dattr copy-failed help_copy_failed)>
 <main>
 <header class="top">
   <div>
@@ -2829,8 +2851,14 @@ function setBusy(on, text) {
 var dlg = document.getElementById('prog'), progBar = document.getElementById('progbar');
 var progCur = document.getElementById('progcur'), progLog = document.getElementById('proglog');
 var progErr = document.getElementById('progerr');
+// Title of the status window: what is going on (check, or which snapshot action)
+var progTitle = document.getElementById('progtitle'), pendingAction = 'scan', pendingText = '';
+function setProgTitle(action) {
+  progTitle.textContent = { snapshot: B.progTitleSnap, snapdel: B.progTitleDel, rollback: B.progTitleRb }[action] || B.progTitle;
+}
 function showProgress(s) {
-  var pct = 0, cur = B.progStarting;
+  setProgTitle(s ? s.action : pendingAction);
+  var pct = 0, cur = (!s && pendingAction !== 'scan' && pendingAction !== 'refresh' && pendingText) || B.progStarting;
   if (s && s.phase === 'snapshot') {
     cur = (s.action === 'snapdel' ? B.delRunning : s.action === 'rollback' ? B.rbRunning : B.snapRunning).replace('{id}', s.cur_id);
   } else if (s && s.phase === 'write') {
@@ -2869,6 +2897,7 @@ function begin(text, quiet) {
 }
 function run(url, needPw, text) {
   scanMsg.textContent = '';
+  pendingAction = url.split('?')[0]; pendingText = text;
   send(url, null, needPw).then(function () { begin(text); }, fail);
 }
 scanBtn.addEventListener('click', function () {
