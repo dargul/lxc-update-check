@@ -280,3 +280,8 @@ L[del_ok]="Snapshot \"{snap}\" of container {id} was deleted."
 L[del_fail]="Snapshot \"{snap}\" of container {id} could not be deleted: {msg}"
 L[rb_ok]="Container {id} was reset to snapshot \"{snap}\"."
 L[rb_fail]="Container {id} could not be reset to snapshot \"{snap}\": {msg}"
+
+# Neu hinzugekommen / newly added
+L[prog_title_snap]="Creating snapshot …"
+L[prog_title_del]="Deleting snapshot …"
+L[prog_title_rb]="Rolling back snapshot …"

@@ -280,3 +280,8 @@ L[del_ok]="Snapshot „{snap}“ von Container {id} wurde gelöscht."
 L[del_fail]="Snapshot „{snap}“ von Container {id} konnte nicht gelöscht werden: {msg}"
 L[rb_ok]="Container {id} wurde auf den Snapshot „{snap}“ zurückgesetzt."
 L[rb_fail]="Container {id} konnte nicht auf den Snapshot „{snap}“ zurückgesetzt werden: {msg}"
+
+# Neu hinzugekommen / newly added
+L[prog_title_snap]="Snapshot wird angelegt …"
+L[prog_title_del]="Snapshot wird gelöscht …"
+L[prog_title_rb]="Snapshot wird zurückgespielt …"
