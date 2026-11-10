@@ -33,7 +33,7 @@ chmod +x lxc-update-check.sh
 |options|description|
 |---|---|
 |[without option] |run a scan now |
-|--install|once: set up cron job (schedule configurable) + web server|
+|--install|set up cron job (schedule configurable) + web server|
 |--refresh <LXC_ID>|re-check container <LXC_ID> only|
 |--snapshot <LXC_ID> pre_update|snapshot of container <LXC_ID>, then re-check it|
 |--uninstall|remove cron job + web server again|
