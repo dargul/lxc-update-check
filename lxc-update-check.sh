@@ -39,6 +39,9 @@
 # merely refreshes the package lists (apt-get update etc.).
 # The help page lists the commands to snapshot and update a container by hand.
 
+# Version: date of the build and a running number for builds on the same day
+VERSION="2026.11.10-3"
+
 set -u
 
 # ---------------------------------------------------------------- Settings
@@ -102,6 +105,11 @@ L[summary_pkg_sec]="Dazu {n} Systempakete auf {s} von {t} Systemen, davon {x} Se
 L[summary_pkg_nosec]="Dazu {n} Systempakete auf {s} von {t} Systemen, keine Security-Updates darunter."
 L[summary_err]="{n} Systeme konnten nicht geprüft werden."
 L[meta_checked]="Geprüft am {date} auf {host}, Dauer {sec} s."
+L[storage_title]="Freier Speicher"
+L[tip_ct_storage]="Liegt auf Speicher {name} ({type})"
+L[tip_snapcap]="Dieser Speicher kann Snapshots"
+L[storage_free]="{free} frei"
+L[tip_storage]="Speicher {name} ({type})\n{used} von {total} belegt ({pct} %)\n{free} frei"
 L[meta_next]="Nächste automatische Prüfung täglich um {time} Uhr."
 L[meta_sched]="Automatische Prüfung nach Zeitplan „{cron}“."
 L[meta_off]="Die automatische Prüfung ist ausgeschaltet."
@@ -187,6 +195,7 @@ L[cfg_col_value]="Wert"
 L[cfg_col_desc]="Bedeutung"
 L[cfg_OUT_DIR]="Ordner, in dem der Report abgelegt wird."
 L[cfg_PORT]="Port, unter dem der Report im Browser erreichbar ist."
+L[cfg_VERSION]="Installierte Version des Scripts (Datum des Builds und laufende Nummer)."
 L[cfg_INCLUDE_HOST]="1 = der Proxmox-Host selbst wird mitgeprüft, 0 = nur die Container."
 L[cfg_TIMEOUT]="Maximale Wartezeit pro Container in Sekunden."
 L[cfg_EXCLUDE]="Container-IDs, die nicht geprüft werden, durch Leerzeichen getrennt."
@@ -352,6 +361,11 @@ L[summary_pkg_sec]="Plus {n} system packages on {s} of {t} systems, {x} of them 
 L[summary_pkg_nosec]="Plus {n} system packages on {s} of {t} systems, none of them security updates."
 L[summary_err]="{n} systems could not be checked."
 L[meta_checked]="Checked on {date} on {host}, took {sec} s."
+L[storage_title]="Free storage"
+L[tip_ct_storage]="Lies on storage {name} ({type})"
+L[tip_snapcap]="This storage supports snapshots"
+L[storage_free]="{free} free"
+L[tip_storage]="Storage {name} ({type})\n{used} of {total} used ({pct} %)\n{free} free"
 L[meta_next]="Next automatic check daily at {time}."
 L[meta_sched]="Automatic check on schedule \"{cron}\"."
 L[meta_off]="The automatic check is switched off."
@@ -437,6 +451,7 @@ L[cfg_col_value]="Value"
 L[cfg_col_desc]="Meaning"
 L[cfg_OUT_DIR]="Folder the report is written to."
 L[cfg_PORT]="Port the report is served on."
+L[cfg_VERSION]="Installed version of the script (build date and running number)."
 L[cfg_INCLUDE_HOST]="1 = the Proxmox host itself is checked as well, 0 = containers only."
 L[cfg_TIMEOUT]="Maximum wait per container in seconds."
 L[cfg_EXCLUDE]="Container IDs that are skipped, separated by spaces."
@@ -786,7 +801,7 @@ ThreadingHTTPServer(("", PORT), functools.partial(Handler, directory=DIR)).serve
 WEBPY
 }
 
-case "${1:-}" in --help|-h) ;; *) [ "$(id -u)" -eq 0 ] || { echo "Please run as root." >&2; exit 1; } ;; esac
+case "${1:-}" in --help|-h|--version|-V) ;; *) [ "$(id -u)" -eq 0 ] || { echo "Please run as root." >&2; exit 1; } ;; esac
 
 # ------------------------------------------------------------------ Installation
 # write_cron – creates or removes the cron job according to CRON_ENABLED and CRON_SCHEDULE
@@ -939,7 +954,7 @@ EOF
     systemctl enable --now lxc-update-web.service lxc-update-scan.path lxc-update-pw.path >/dev/null
     systemctl restart lxc-update-web.service lxc-update-scan.path lxc-update-pw.path
 
-    echo "Installed. Running the first scan …"
+    echo "lxc-update-check $VERSION installed. Running the first scan …"
     "$BIN"
     echo
     echo "Report:        http://$(hostname -I | awk '{print $1}'):$PORT/"
@@ -1012,6 +1027,8 @@ do_dispatch() {
 }
 
 usage() { cat <<EOF
+lxc-update-check $VERSION
+
 Usage: lxc-update-check [option]
 
   (no option)                    check all containers now and write the report
@@ -1023,6 +1040,7 @@ Usage: lxc-update-check [option]
   --rollback <CT-ID> <name>      reset a container to a snapshot (a running container is
                                  shut down and started again), then check it again
   --snapdel <CT-ID> <name>       delete a snapshot, then check the container again
+  --version                      show the version
   --help                         show this help
 
 Settings: $ETC/config    Report: $OUT_DIR/index.html    Log of the cron job: $LOG
@@ -1032,6 +1050,7 @@ EOF
 REFRESH_ID=""; RENDER=""; SNAP_ID=""; SNAP_NAME=""; SNAP_OK=""; SNAP_MSG=""; SNAP_OP=create
 case "${1:-}" in
     --help|-h)   usage; exit 0 ;;
+    --version|-V) echo "lxc-update-check $VERSION"; exit 0 ;;
     --install)   do_install;   exit 0 ;;
     --uninstall) do_uninstall; exit 0 ;;
     --dispatch)  do_dispatch ;;
@@ -1612,6 +1631,7 @@ add_row() {
     local os="–" warn="" warndetail="" cs="" csbase="" aptapp="" pkgs=0 sec=0 list="" tag a b c d
     local -A ver=()
     local -a leg=() apps=() docks=() mans=()
+    local stags="" stn
     local rerr=0
 
     while IFS='|' read -r tag a b c d; do
@@ -1808,6 +1828,13 @@ add_row() {
         tag=$(esc "$(T btn_refresh_tip id="$id")")
         action+=" <button class=\"up$hot\" data-id=\"$id\" data-name=\"$(esc "$name")\" title=\"$tag\" aria-label=\"$tag\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 19.5V5M5.5 11.5 12 5l6.5 6.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></button>"
     fi
+    # Storage tags of this container (where its volumes lie)
+    if [[ $id =~ ^[0-9]+$ ]] && [ -n "${CT_STORES[$id]:-}" ]; then
+        for stn in ${CT_STORES[$id]}; do
+            stags+=" $(stag "$stn" "$(T tip_ct_storage name="$stn" type="${STORE_TYPE[$stn]:-?}")")"
+        done
+        stags="<span class=\"stags\">$stags</span>"
+    fi
     # Camera button: take a snapshot (only if all volumes lie on snapshot-capable storage)
     local s_ok s_name s_time s_all snapbtns=""
     IFS='|' read -r s_ok s_name s_time s_all <<< "$SNAPI"
@@ -1837,7 +1864,7 @@ add_row() {
     local sid=0; [[ $id =~ ^[0-9]+$ ]] && sid=$id
     # Classes and data-label drive the phone layout (compact list with details to open)
     local more="<button class=\"more\" aria-expanded=\"false\" aria-label=\"$(esc "$(T btn_details)")\" title=\"$(esc "$(T btn_details)")\">▾</button>"
-    local rowhtml="<tr class=\"ct $cls\" data-id=\"$sid\" data-name=\"$(esc "$name")\"><td class=\"num c-id\" data-label=\"$(esc "$(T col_id)")\">$(esc "$id")</td><td class=\"c-name\"><strong>$(esc "$name")</strong><div class=\"note\">$(esc "$os")</div>$note</td><td class=\"c-app\" data-label=\"$(esc "$(T col_app)")\">$c_app</td><td class=\"v c-inst\">$c_inst</td><td class=\"v c-new\">$c_new</td><td class=\"c-status\" data-label=\"$(esc "$(T col_status)")\"><span class=\"tag $cls\">$(esc "$label")</span></td><td class=\"num c-pkg\" data-label=\"$(esc "$(T col_packages)")\">$c_pkg</td><td class=\"c-info\" data-label=\"$(esc "$(T col_system)")\"><div>$(esc "$os")</div>$note</td><td class=\"c-snaps\" data-label=\"$(esc "$(T col_snapshots)")\">${snapbtns:+<div>$snapbtns</div>}</td><td class=\"act c-act\"><div class=\"acts\">$more$action</div></td></tr>"
+    local rowhtml="<tr class=\"ct $cls\" data-id=\"$sid\" data-name=\"$(esc "$name")\"><td class=\"num c-id\" data-label=\"$(esc "$(T col_id)")\">$(esc "$id")</td><td class=\"c-name\"><strong>$(esc "$name")$stags</strong><div class=\"note\">$(esc "$os")</div>$note</td><td class=\"c-app\" data-label=\"$(esc "$(T col_app)")\">$c_app</td><td class=\"v c-inst\">$c_inst</td><td class=\"v c-new\">$c_new</td><td class=\"c-status\" data-label=\"$(esc "$(T col_status)")\"><span class=\"tag $cls\">$(esc "$label")</span></td><td class=\"num c-pkg\" data-label=\"$(esc "$(T col_packages)")\">$c_pkg</td><td class=\"c-info\" data-label=\"$(esc "$(T col_system)")\"><div>$(esc "$os")</div>$note</td><td class=\"c-snaps\" data-label=\"$(esc "$(T col_snapshots)")\">${snapbtns:+<div>$snapbtns</div>}</td><td class=\"act c-act\"><div class=\"acts\">$more$action</div></td></tr>"
     if [ "$pkgs" -gt 0 ]; then
         rowhtml+="<tr class=\"detail\" hidden><td></td><td colspan=\"7\"><table class=\"pk\"><thead><tr><th>$(esc "$(T pk_package)")</th><th>$(esc "$(T pk_installed)")</th><th>$(esc "$(T pk_available)")</th><th></th></tr></thead><tbody>$list</tbody></table></td></tr>"
     fi
@@ -1854,13 +1881,136 @@ add_row() {
     fi
 }
 
+# ------------------------------------------------------------------- Storage space
+# Free space of the storages the containers use (rootfs and mount points), from
+# "pvesm status". Collected with every check and kept in $STATE/storage, so a page
+# rebuild (--render) shows the values of the last check.
+collect_storage() {
+    local -A used=()
+    local f line vol data n t tot use av count=0
+    for f in "$PVE_DIR"/lxc/*.conf; do
+        [ -r "$f" ] || continue
+        while IFS= read -r line; do
+            [[ $line == \[* ]] && break                      # snapshot sections follow
+            if [[ $line =~ ^(rootfs|mp[0-9]+):[[:space:]]*([^,[:space:]]+) ]]; then
+                vol=${BASH_REMATCH[2]}
+                [[ $vol == /* ]] || used[${vol%%:*}]=1
+            fi
+        done < "$f"
+    done
+    if [ "${#used[@]}" -eq 0 ]; then
+        echo "  storage: no container volumes found in $PVE_DIR/lxc"
+        return 0
+    fi
+    # First choice: the API (values in bytes, as JSON); fallback: the table of pvesm
+    data=$(timeout 30 pvesh get /nodes/localhost/storage --output-format json 2>/dev/null | python3 -c '
+import json, sys
+try:
+    for s in json.load(sys.stdin):
+        if s.get("active") and s.get("total"):
+            print("%s|%s|%d|%d|%d" % (s["storage"], s.get("type", ""), s["total"] // 1024, s.get("used", 0) // 1024, s.get("avail", 0) // 1024))
+except Exception:
+    pass' 2>/dev/null)
+    if [ -z "$data" ]; then
+        data=$(timeout 30 pvesm status 2>/dev/null \
+            | awk 'NR > 1 && $3 == "active" && $4 ~ /^[0-9]+$/ && $4 > 0 { print $1 "|" $2 "|" $4 "|" $5 "|" $6 }')
+    fi
+    if [ -z "$data" ]; then
+        echo "  storage: neither pvesh nor pvesm returned storage data"
+        return 0
+    fi
+    mkdir -p "$STATE"
+    : > "$STATE/storage.tmp"
+    while IFS='|' read -r n t tot use av; do
+        [ -n "${used[$n]+x}" ] || continue
+        echo "$n|$t|$tot|$use|$av" >> "$STATE/storage.tmp"; count=$((count + 1))
+    done <<< "$data"
+    mv -f "$STATE/storage.tmp" "$STATE/storage"
+    echo "  storage: $count of ${#used[@]} storages used by containers (${!used[*]})"
+}
+
+# hsize <KiB> – readable size like Proxmox shows it (GiB/TiB), decimal comma in German
+hsize() {
+    local v
+    v=$(awk -v k="$1" 'BEGIN {
+        if (k >= 1073741824) printf "%.1f TiB", k / 1073741824;
+        else if (k >= 10485760) printf "%.0f GiB", k / 1048576;
+        else if (k >= 1048576) printf "%.1f GiB", k / 1048576;
+        else printf "%.0f MiB", k / 1024 }')
+    [ "${L[lang_code]}" = de ] && v=${v/./,}
+    printf '%s' "$v"
+}
+
+# Storage tags: every storage the containers use gets a short code and a colour.
+# The same tag marks the storage in the list under the buttons and every container
+# that lies on it. Codes: initials of the name parts (local-lvm → LL, data → D).
+declare -A CT_STORES=() STAG_CODE=() STAG_COLOR=()
+STAG_PALETTE=('#7048a8' '#b0650c' '#2e7d4f' '#b23a6b' '#3f5fb5' '#8a5a2b' '#1f7f86' '#6b7280')
+storage_map() {
+    local f id line vol st all="" n i=0 code base k
+    local -A seen=() codes=()
+    for f in "$PVE_DIR"/lxc/*.conf; do
+        [ -r "$f" ] || continue
+        id=${f##*/}; id=${id%.conf}
+        while IFS= read -r line; do
+            [[ $line == \[* ]] && break
+            if [[ $line =~ ^(rootfs|mp[0-9]+):[[:space:]]*([^,[:space:]]+) ]]; then
+                vol=${BASH_REMATCH[2]}
+                [[ $vol == /* ]] && continue
+                st=${vol%%:*}
+                [[ " ${CT_STORES[$id]:-} " == *" $st "* ]] || CT_STORES[$id]+="${CT_STORES[$id]:+ }$st"
+                seen[$st]=1
+            fi
+        done < "$f"
+    done
+    # also storages that only appear in the free-space list
+    if [ -s "$STATE/storage" ]; then
+        while IFS='|' read -r n _; do seen[$n]=1; done < "$STATE/storage"
+    fi
+    while IFS= read -r n; do
+        [ -n "$n" ] || continue
+        IFS='-_.' read -ra parts <<< "$n"
+        if [ "${#parts[@]}" -ge 2 ]; then base="${parts[0]:0:1}${parts[1]:0:1}"; else base=${n:0:1}; fi
+        base=${base^^}; code=$base; k=2
+        while [ -n "${codes[$code]+x}" ]; do code="$base$k"; k=$((k + 1)); done
+        codes[$code]=1
+        STAG_CODE[$n]=$code
+        STAG_COLOR[$n]=${STAG_PALETTE[$(( i % ${#STAG_PALETTE[@]} ))]}
+        i=$((i + 1))
+    done < <(printf '%s\n' "${!seen[@]}" | sort)
+}
+# stag <storage> <tooltip> – the tag of a storage as HTML
+stag() {
+    printf '<span class="stag" style="--c:%s" data-tt="%s">%s</span>' \
+        "${STAG_COLOR[$1]:-#6b7280}" "$(esc "$2")" "$(esc "${STAG_CODE[$1]:-?}")"
+}
+CAM_SVG='<svg class="cam" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/></svg>'
+
+# storage_html – one line per storage under the buttons: name, free space, usage bar
+storage_html() {
+    [ -s "$STATE/storage" ] || return 0
+    local n t tot use av pct cls tip out=""
+    while IFS='|' read -r n t tot use av; do
+        pct=$(( use * 100 / tot ))
+        if [ "$pct" -ge 95 ]; then cls=bad; elif [ "$pct" -ge 85 ]; then cls=warn; else cls=ok; fi
+        tip=$(T tip_storage name="$n" type="$t" used="$(hsize "$use")" total="$(hsize "$tot")" free="$(hsize "$av")" pct="$pct")
+        local cam=""
+        [[ $SNAP_TYPES == *" $t "* ]] && cam=" <span class=\"snapcap\" data-tt=\"$(esc "$(T tip_snapcap)")\">$CAM_SVG</span>"
+        out+="<div class=\"st\" data-tt=\"$(esc "$tip")\">$(stag "$n" "$tip")<span class=\"sn\">$(esc "$n")$cam</span><span class=\"sf\">$(esc "$(T storage_free free="$(hsize "$av")")")</span><span class=\"bar $cls\"><i style=\"width:$pct%\"></i></span></div>"
+    done < "$STATE/storage"
+    [ -n "$out" ] && printf '<div id="stor" class="stor" aria-label="%s">%s</div>' "$(esc "$(T storage_title)")" "$out"
+}
+
 # ------------------------------------------------------------------------- Scan
 START=$(date +%s)
-echo "[$(date '+%F %T')] Scan started"
+echo "[$(date '+%F %T')] Scan started (lxc-update-check $VERSION)"
 
 if [ -n "$SNAP_ID" ]; then
     if [ "$SNAP_OP" = create ]; then do_snapshot "$SNAP_ID" "$SNAP_NAME"; else do_snapop "$SNAP_OP" "$SNAP_ID" "$SNAP_NAME"; fi
 fi
+
+[ -n "$RENDER" ] || collect_storage
+storage_map
 
 mapfile -t CTS < <(pct list 2>/dev/null | awk 'NR > 1 { print $1 "|" $2 "|" $NF }')
 
@@ -1976,6 +2126,31 @@ header.top h1, header.top p { white-space: nowrap; }
   header.top h1, header.top p { white-space: normal; }
 }
 .scanbox { display: flex; flex-direction: column; align-items: stretch; gap: .5rem; flex: none; }
+/* Free storage below the buttons: placed outside the flow so the header keeps its
+   height; the script below limits it to the space next to the title text */
+body.report .scanbox { position: relative; }
+.stor { position: absolute; top: 100%; right: 0; width: max-content; min-width: 100%; margin-top: .3rem; overflow-y: auto; font-size: .7rem; line-height: 1.15; color: var(--mute); scrollbar-width: thin; }
+.stor .st { display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: .45rem; margin-bottom: .22rem; cursor: default; }
+.stor .st:last-child { margin-bottom: 0; }
+.stor .sn { white-space: nowrap; font-weight: 600; color: var(--ink); }
+/* Storage tag: small coloured label with the storage's code */
+.stag {
+  display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box;
+  min-width: 1.15rem; height: 1rem; padding: 0 .22rem; border-radius: 4px;
+  font-size: .6rem; font-weight: 700; line-height: 1; letter-spacing: .02em; color: #fff; background: var(--c); cursor: default;
+}
+.stor .stag { grid-row: 1 / span 2; align-self: center; width: 1.45rem; }   /* same width: names line up */
+.stags { display: inline-flex; gap: .25rem; margin-left: .45rem; vertical-align: 1px; }
+.stags .stag { min-width: 1.45rem; height: 1.2rem; padding: 0 .3rem; font-size: .7rem; border-radius: 5px; }
+.stor .sf { white-space: nowrap; text-align: right; padding-left: .5rem; }
+.stor .snapcap { display: inline-flex; vertical-align: -2px; margin-left: .25rem; color: var(--accent); }
+.stor .snapcap svg { width: .85rem; height: .85rem; }
+.stor .bar { grid-column: 2 / -1; height: 3px; margin-top: .1rem; background: var(--line); border-radius: 2px; overflow: hidden; }
+.stor .bar i { display: block; height: 100%; background: var(--ok); }
+.stor .bar.warn i { background: var(--warn); }
+.stor .bar.bad i { background: var(--bad); }
+.stor .st:has(.bar.warn) .sf { color: var(--warn); }
+.stor .st:has(.bar.bad) .sf { color: var(--bad); }
 .btn {
   display: block; font: inherit; font-weight: 600; text-align: center; text-decoration: none;
   color: var(--panel); background: var(--accent); border: 1px solid var(--accent);
@@ -1989,6 +2164,7 @@ header.top h1, header.top p { white-space: nowrap; }
 #scanmsg { font-size: .85rem; color: var(--bad); white-space: pre-line; max-width: 24rem; }
 h1 { display: flex; align-items: center; gap: .65rem; margin: 0 0 1rem; font-size: clamp(1.6rem, 3.5vw, 2.1rem); line-height: 1.1; font-weight: 750; letter-spacing: -.025em; }
 h1 .mark svg { width: 66%; height: 66%; }
+h1 sup.ver { align-self: flex-start; margin: .15em 0 0 -.35em; font-size: .34em; font-weight: 600; letter-spacing: 0; line-height: 1; color: var(--mute); }
 h1 .mark {
   display: inline-flex; align-items: center; justify-content: center; flex: none;
   width: 1.25em; height: 1.25em; font-size: 1em; letter-spacing: 0;
@@ -2161,6 +2337,9 @@ table.pk td { max-width: 250px; }
 .tag.warn { color: var(--warn); background: var(--warn-bg); }
 .tag.bad  { color: var(--bad);  background: var(--bad-bg); }
 .tag.sys, .tag.off { color: var(--off); background: var(--off-bg); }
+/* Help page: where a command runs – light orange on the host, light green in the container */
+.tag.onhost { color: var(--warn); background: var(--warn-bg); }
+.tag.inct { color: var(--ok); background: var(--ok-bg); }
 button.tgl {
   font: inherit; font-size: .85rem; color: var(--accent); background: none;
   border: 1px solid var(--line); border-radius: 6px; padding: .2rem .65rem; cursor: pointer;
@@ -2230,6 +2409,7 @@ p.scope { color: var(--mute); }
   header > div:first-child { flex: 1 1 100%; min-width: 0; }
   header p, .note, .why { overflow-wrap: anywhere; }
   .scanbox { flex: 1 1 100%; flex-direction: row; flex-wrap: wrap; }
+  .stor { position: static; width: auto; flex-basis: 100%; margin-top: .1rem; max-height: none !important; display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); column-gap: 1rem; }
   .scanbox .btn { flex: 1 1 auto; padding: .5rem .8rem; }
   #scanmsg { flex-basis: 100%; max-width: none; }
   .wrap { overflow: hidden; }
@@ -2487,7 +2667,7 @@ cat <<HTML
 <main>
 <header>
   <div>
-    <h1><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19.5V5M5.5 11.5 12 5l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>$(esc "$(T app_title)")</h1>
+    <h1><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19.5V5M5.5 11.5 12 5l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>$(esc "$(T app_title)")<sup class="ver">$(esc "$VERSION")</sup></h1>
     <p class="headline">$(esc "$(T cfg_title)")</p>
     <p>$(esc "$(T cfg_intro dir="$ETC")")</p>
   </div>
@@ -2507,6 +2687,7 @@ cat <<HTML
 HTML
 cfg_row OUT_DIR "$OUT_DIR" "$(T cfg_OUT_DIR)"
 cfg_row PORT    "$PORT"    "$(T cfg_PORT)"
+cfg_row VERSION "$VERSION" "$(T cfg_VERSION)"
 cfg_input INCLUDE_HOST "<input id=\"f_INCLUDE_HOST\" type=\"checkbox\"$(checked "$INCLUDE_HOST")>" "$(T cfg_INCLUDE_HOST)"
 cfg_input TIMEOUT "<input id=\"f_TIMEOUT\" type=\"number\" min=\"1\" max=\"99999\" value=\"$(esc "$TIMEOUT")\">" "$(T cfg_TIMEOUT)"
 cfg_input EXCLUDE "<input id=\"f_EXCLUDE\" type=\"text\" inputmode=\"numeric\" value=\"$(esc "$EXCLUDE")\">" "$(T cfg_EXCLUDE)"
@@ -2680,14 +2861,14 @@ CMDS
 
 write_help() {
     local -A osname=([deb]="Debian / Ubuntu" [arch]="Arch Linux" [alpine]="Alpine Linux" [fedora]="Fedora / Rocky / AlmaLinux" [suse]="openSUSE")
-    local n=0 num st where line rest os cmd label o
+    local n=0 num st where wcls line rest os cmd label o
     page_head "$(T help_title) – $(T app_title)"
     cat <<HTML
 <body data-lang="$(esc "${L[lang_code]}")"$(dattr copy help_copy)$(dattr copied help_copied)$(dattr copy-failed help_copy_failed)>
 <main>
 <header>
   <div>
-    <h1><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19.5V5M5.5 11.5 12 5l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>$(esc "$(T app_title)")</h1>
+    <h1><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19.5V5M5.5 11.5 12 5l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>$(esc "$(T app_title)")<sup class="ver">$(esc "$VERSION")</sup></h1>
     <p class="headline">$(esc "$(T help_title)")</p>
     <p>$(esc "$(T help_intro)")</p>
   </div>
@@ -2706,9 +2887,12 @@ HTML
     # The seven update steps are numbered; the snapshot sections around them are not
     for st in snap enter refresh list install autoremove clean reboot rollback delsnap; do
         case $st in snap|rollback|delsnap) num="" ;; *) n=$((n + 1)); num="$n. " ;; esac
-        case $st in refresh|list|install|autoremove|clean) where=$(T help_where_ct) ;; *) where=$(T help_where_host) ;; esac
-        printf '<section class="step">\n<h2>%s%s <span class="tag sys">%s</span></h2>\n<p>%s</p>\n' \
-            "$num" "$(esc "$(T "help_step_$st")")" "$(esc "$where")" "$(esc "$(T "help_expl_$st")")"
+        case $st in
+            refresh|list|install|autoremove|clean) where=$(T help_where_ct); wcls=inct ;;
+            *) where=$(T help_where_host); wcls=onhost ;;
+        esac
+        printf '<section class="step">\n<h2>%s%s <span class="tag %s">%s</span></h2>\n<p>%s</p>\n' \
+            "$num" "$(esc "$(T "help_step_$st")")" "$wcls" "$(esc "$where")" "$(esc "$(T "help_expl_$st")")"
         while IFS= read -r line; do
             [[ $line == "$st :: "* ]] || continue
             rest=${line#* :: }; os=${rest%% :: *}; rest=${rest#* :: }
@@ -2797,7 +2981,7 @@ cat <<HTML
 <main>
 <header class="top">
   <div>
-    <h1><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19.5V5M5.5 11.5 12 5l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>$(esc "$(T app_title)")</h1>
+    <h1><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19.5V5M5.5 11.5 12 5l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>$(esc "$(T app_title)")<sup class="ver">$(esc "$VERSION")</sup></h1>
     <p class="headline">$(esc "$HEADLINE")</p>
     <p>$(esc "$SUMMARY")</p>
     <p class="meta">$(esc "$META")</p>
@@ -2806,6 +2990,7 @@ cat <<HTML
     <button id="scan" class="btn">$(esc "$(T btn_scan)")</button>
     <a class="btn ghost" href="config.html">$(esc "$(T btn_config)")</a>
     <span id="scanmsg" role="status"></span>
+    $(storage_html)
   </div>
 </header>
 <p id="snapres" class="okbox top" role="status" hidden></p>
@@ -2847,6 +3032,18 @@ function setBusy(on, text) {
   scanBtn.textContent = on ? text : B.scan;
   scanBtn.setAttribute('aria-busy', on ? 'true' : 'false');
 }
+// Free storage under the buttons: as much as fits next to the title text, the rest scrolls
+(function () {
+  var st = document.getElementById('stor'), hd = document.querySelector('header.top');
+  if (!st || !hd) { return; }
+  function fit() {
+    if (getComputedStyle(st).position !== 'absolute') { st.style.maxHeight = ''; return; }
+    // may reach into the gap above the table, but never into the table itself
+    var room = hd.getBoundingClientRect().bottom + 24 - st.getBoundingClientRect().top;
+    st.style.maxHeight = Math.max(room, 40) + 'px';
+  }
+  fit(); window.addEventListener('resize', fit);
+})();
 // Status window: progress bar, current container, results so far
 var dlg = document.getElementById('prog'), progBar = document.getElementById('progbar');
 var progCur = document.getElementById('progcur'), progLog = document.getElementById('proglog');
