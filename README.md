@@ -37,6 +37,7 @@ chmod +x lxc-update-check.sh
 |--refresh <LXC_ID>|re-check container <LXC_ID> only|
 |--snapshot <LXC_ID> pre_update|snapshot of container <LXC_ID>, then re-check it|
 |--uninstall|remove cron job + web server again|
+|--version|prints version number|
 |--help|list all options|
 
 <br>
