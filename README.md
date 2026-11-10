@@ -10,7 +10,7 @@ Checked per container:
    - running image against the current image in the registry (Docker Hub, ghcr.io, lscr.io, quay.io …)  
 5. System packages (apt, apk, dnf, pacman)  
 
-![Screenshot of the report main page.](/resources/lxc-update-check-main.png)
+
 
 <br>
 
