@@ -285,3 +285,15 @@ L[rb_fail]="Container {id} konnte nicht auf den Snapshot „{snap}“ zurückges
 L[prog_title_snap]="Snapshot wird angelegt …"
 L[prog_title_del]="Snapshot wird gelöscht …"
 L[prog_title_rb]="Snapshot wird zurückgespielt …"
+
+# Neu hinzugekommen / newly added
+L[storage_title]="Freier Speicher"
+L[storage_free]="{free} frei"
+L[tip_storage]="Speicher {name} ({type})\n{used} von {total} belegt ({pct} %)\n{free} frei"
+
+# Neu hinzugekommen / newly added
+L[cfg_VERSION]="Installierte Version des Scripts (Datum des Builds und laufende Nummer)."
+
+# Neu hinzugekommen / newly added
+L[tip_ct_storage]="Liegt auf Speicher {name} ({type})"
+L[tip_snapcap]="Dieser Speicher kann Snapshots"

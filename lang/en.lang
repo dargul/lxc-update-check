@@ -285,3 +285,15 @@ L[rb_fail]="Container {id} could not be reset to snapshot \"{snap}\": {msg}"
 L[prog_title_snap]="Creating snapshot …"
 L[prog_title_del]="Deleting snapshot …"
 L[prog_title_rb]="Rolling back snapshot …"
+
+# Neu hinzugekommen / newly added
+L[storage_title]="Free storage"
+L[storage_free]="{free} free"
+L[tip_storage]="Storage {name} ({type})\n{used} of {total} used ({pct} %)\n{free} free"
+
+# Neu hinzugekommen / newly added
+L[cfg_VERSION]="Installed version of the script (build date and running number)."
+
+# Neu hinzugekommen / newly added
+L[tip_ct_storage]="Lies on storage {name} ({type})"
+L[tip_snapcap]="This storage supports snapshots"
