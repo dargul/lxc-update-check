@@ -4,7 +4,7 @@ lxc-update-check.sh – checks all LXC containers of a proxmox host for updates
 and writes the result as an HTML report. VMs are not looked at.
 
 Checked per container:
-1. Apps installed via community-scripts (ProxmoxVE helper scripts):<br>
+1. Apps installed via [community-scripts](https://github.com/community-scripts/ProxmoxVE) (ProxmoxVE helper scripts):<br>
    - installed version against the project's latest release
 3. Docker containers inside the LXC:<br>
    - running image against the current image in the registry (Docker Hub, ghcr.io, lscr.io, quay.io …)  
